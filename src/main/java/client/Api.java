@@ -15,6 +15,8 @@ public class Api {
     private int serverPort;
     private String token;
 
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
     public Api(String serverIp, int serverPort) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
@@ -102,17 +104,16 @@ public class Api {
 
 
     public void createTeacher(String name, String username, String password) throws ClientException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "test");
+        jsonObject.put("username", "test");
+        jsonObject.put("password", "test");
 
-        RequestBody formBody = new FormBody.Builder()
-                .add("name", "test")
-                .add("username", "test")
-                .add("password", "test")
-                .build();
-
+        RequestBody formBody = RequestBody.create(JSON, jsonObject.toString());
 
         Request request = new Request.Builder()
                 .url(String.format("http://%s:%d/api/v1/admin/teachers", serverIp, serverPort))
-                .header("name", "Bearer " + token)
+                .header("Authorization", "Bearer " + token)
                 .post(formBody)
                 .build();
 
