@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="405.0" prefWidth="604.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.StudentController">
+   <children>
+      <VBox>
+         <children>
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="597.0" text="Student Page">
+            </Label>
+            <HBox>
+               <children>
+                  <ScrollPane prefHeight="402.0" prefViewportHeight="400.0" prefViewportWidth="200.0" prefWidth="223.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <VBox prefHeight="394.0" prefWidth="217.0">
+                           <children>
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="216.0" text="Course" />
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Course:" />
+                                    <TextField fx:id="student_coursecourse" prefHeight="25.0" prefWidth="175.0" />
+                                 </children>
+                              </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="34.0" prefWidth="318.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" text="List" onAction="#courseList" />
+                                    <Button mnemonicParsing="false" text="Apply" onAction="#courseApply" />
+                                    <Button mnemonicParsing="false" text="Delete" onAction="#courseDelete" />
+                                 </children>
+                              </HBox>
+                              <Separator prefWidth="200.0" />
+            				  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="215.0" text="Homework" textAlignment="CENTER" />
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Homework:" />
+                                    <TextField fx:id="student_homeworkhomework" prefHeight="25.0" prefWidth="155.0" />
+                                 </children>
+                              </HBox>
+            				  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="File:" />
+                                    <Button fx:id="filechoose" mnemonicParsing="false" text="Choose File" onAction="#homeworkChooseFile" />
+                                 </children>
+                              </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="34.0" prefWidth="318.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" text="List" onAction="#homeworkList" />
+                                    <Button mnemonicParsing="false" text="Apply" onAction="#homeworkApply" />
+                                    <Button mnemonicParsing="false" text="Delete" onAction="#homeworkDelete" />
+            						<Button mnemonicParsing="false" text="Upload" onAction="#homeworkUpload" />
+                                 </children>
+                              </HBox>
+                              <Separator prefWidth="200.0" />
+                              <Label alignment="CENTER" prefHeight="17.0" prefWidth="215.0" text="Solution" />
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="34.0" prefWidth="318.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" text="List" onAction="#solutionList" />
+                                    <Button mnemonicParsing="false" text="Get" onAction="#solutionGet" />
+                                 </children>
+                              </HBox>
+                              <Separator prefWidth="200.0" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <TableView fx:id="studenttable" layoutX="225.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="376.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="225.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn prefWidth="75.0" text="C1" />
+                      <TableColumn prefWidth="75.0" text="C2" />
+                    </columns>
+                  </TableView>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.SignInController">
+   <children>
+      <VBox layoutX="171.0" layoutY="102.0" prefHeight="196.0" prefWidth="258.0">
+         <children>
+            <Label text="Username" />
+            <TextField id="usernametextfield" fx:id="usernametextfield" />
+            <Label text="Password" />
+            <PasswordField fx:id="passwordfield" />
+            <Pane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="signinbtn" layoutX="144.0" layoutY="96.0" mnemonicParsing="false" onAction="#signIn" text="Sign in" />
+                  <Label fx:id="errortextlabel" layoutX="13.0" layoutY="121.0" prefHeight="51.0" prefWidth="313.0" textAlignment="CENTER" textFill="RED">
+                  </Label>
+                  <VBox layoutX="2.0" layoutY="1.0" prefHeight="93.0" prefWidth="339.0">
+                     <children>
+                        <RadioButton fx:id="adminradiobutton" mnemonicParsing="false" text="Administrator">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="signin" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="teacherradiobutton" mnemonicParsing="false" text="Teacher" toggleGroup="$signin">
+                        </RadioButton>
+                        <RadioButton fx:id="studentradiobutton" mnemonicParsing="false" text="Student" toggleGroup="$signin">
+                        </RadioButton>
+                     </children>
+                  </VBox>
+               </children>
+            </Pane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

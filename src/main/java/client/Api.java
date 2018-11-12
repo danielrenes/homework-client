@@ -99,4 +99,36 @@ public class Api {
             throw new ClientException("Could not process response body");
         }
     }
+
+
+    public void createTeacher(String name, String username, String password) throws ClientException {
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("name", "test")
+                .add("username", "test")
+                .add("password", "test")
+                .build();
+
+
+        Request request = new Request.Builder()
+                .url(String.format("http://%s:%d/api/v1/admin/teachers", serverIp, serverPort))
+                .header("name", "Bearer " + token)
+                .post(formBody)
+                .build();
+
+
+        Response response;
+
+        try {
+            response = okHttpClient.newCall(request).execute();
+        } catch (IOException e) {
+            throw new ClientException("Could not execute request");
+        }
+
+        if (response.code() != 200 || response.body() == null) {
+            throw new ClientException("Request failed");
+        }
+
+    }
+
 }
