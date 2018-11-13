@@ -1,40 +1,126 @@
 package application;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import client.Api;
+import client.ClientException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import model.*;
 
 public class TeacherController {
 
 	@FXML TextField teacher_coursename;
 	@FXML TextField teacher_coursedesc;
+	@FXML TextField teacher_courseid;
 	@FXML TextField teacher_groupstudents;
 	@FXML TextField teacher_homeworkname;
 	@FXML TextField teacher_homeworkdescription;
+	@FXML TextField teacher_homeworkid;
 	@FXML TextField teacher_homeworkdeadline;
 	@FXML TextField teacher_homeworkheadcount;
 	@FXML TextField teacher_solutionstatus;
 	@FXML TextField teacher_solutionnotes;
 	@FXML TableView teachertable;
+	@FXML TextField teacher_studentid;
+	@FXML TextField teacher_solutionid;
+
+
+	String serverIp = "localhost";
+	int serverPort = 5000;
+
+	String username = "t";
+	String password = "t";
+
+	public Api api = new Api(serverIp, serverPort);
 
 	
 	@FXML
 	private void courseList() throws IOException{
-		
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+		List<Course> courseList = new ArrayList<Course>();
+		try {
+			courseList = api.getCourses();
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+
+		teachertable.setEditable(true);
+
+		TableColumn<Course, String> nameColumn = new TableColumn<Course, String>("Name");
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+		TableColumn<Course, String> teachernameColumn = new TableColumn<Course, String>("Teacher Name");
+		teachernameColumn.setCellValueFactory(new PropertyValueFactory<>("teacherName"));
+
+		TableColumn<Course, String> descColumn = new TableColumn<Course, String>("Description");
+		descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+		teachertable.getItems().clear();
+		teachertable.getColumns().clear();
+
+		teachertable.getColumns().addAll(nameColumn, teachernameColumn, descColumn);
+
+		ObservableList<Course> data = FXCollections.observableArrayList();
+
+
+		Course t = new Course();
+		for (int i = 0; i < courseList.size(); i++) {
+			t = new Course();
+			t.setName(courseList.get(i).getName());
+			t.setDescription(courseList.get(i).getDescription());
+			t.setTeacherName(courseList.get(i).getTeacherName());
+			teachertable.getItems().add(t);
+		}
 	}
 	
 	@FXML
 	private void courseCreate() throws IOException{
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
 		String course = teacher_coursename.getText();
 		String description = teacher_coursedesc.getText();
+
+		try {
+			api.createCourse(course, description);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 	@FXML
 	private void courseDelete() throws IOException{
-		String course = teacher_coursename.getText();
-		String description = teacher_coursedesc.getText();
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+		Integer courseid = Integer.parseInt(teacher_courseid.getText());
+
+		try {
+			api.removeCourse(courseid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 	@FXML
@@ -56,44 +142,254 @@ public class TeacherController {
 	private void groupModify() throws IOException{
 		String group = teacher_groupstudents.getText();
 	}
-	
+
+
+
 	@FXML
 	private void homeworkList() throws IOException{
-		
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+		List<Homework> homeworkList = new ArrayList<Homework>();
+		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+		try {
+			homeworkList = api.getHomework(homeworkid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+
+		teachertable.setEditable(true);
+
+		TableColumn<Homework, String> nameColumn = new TableColumn<Homework, String>("Name");
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+		TableColumn<Homework, Date> deadlineColumn = new TableColumn<Homework, Date>("Deadline");
+		deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+
+		TableColumn<Homework, String> descriptionColumn = new TableColumn<Homework, String>("Description");
+		descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+		TableColumn<Homework, Integer> headcountColumn = new TableColumn<Homework, Integer>("Headcount");
+		headcountColumn.setCellValueFactory(new PropertyValueFactory<>("headcount"));
+
+		TableColumn<Homework, Boolean> selfAssignableColumn = new TableColumn<Homework, Boolean>("selfAssignable");
+		selfAssignableColumn.setCellValueFactory(new PropertyValueFactory<>("selfAssignable"));
+
+		TableColumn<Homework, String> courseNameColumn = new TableColumn<Homework, String>("Course name");
+		courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+
+		teachertable.getItems().clear();
+		teachertable.getColumns().clear();
+
+		teachertable.getColumns().addAll(nameColumn, deadlineColumn, descriptionColumn, headcountColumn, selfAssignableColumn, courseNameColumn);
+
+		ObservableList<Homework> data = FXCollections.observableArrayList();
+
+
+		Homework t = new Homework();
+		for (int i = 0; i < homeworkList.size(); i++) {
+			t = new Homework();
+			t.setName(homeworkList.get(i).getName());
+			t.setDescription(homeworkList.get(i).getDescription());
+			t.setCourseName(homeworkList.get(i).getCourseName());
+			t.setDeadline(homeworkList.get(i).getDeadline());
+			t.setHeadcount(homeworkList.get(i).getHeadcount());
+			t.setSelfAssignable(true);
+			teachertable.getItems().add(t);
+		}
 	}
 	
 	@FXML
 	private void homeworkCreate() throws IOException{
-		String name = teacher_homeworkname.getText();
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+		try {
+			api.createHomework(homeworkid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+
+		/*String name = teacher_homeworkname.getText();
 		String description = teacher_homeworkdescription.getText();
 		String Deadline = teacher_homeworkdeadline.getText();
-		String headcount = teacher_homeworkheadcount.getText();
+		String headcount = teacher_homeworkheadcount.getText();*/
 	}
 	
 	@FXML
 	private void homeworkDelete() throws IOException{
-		String name = teacher_homeworkname.getText();
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+		try {
+			api.removeHomework(homeworkid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+		/*String name = teacher_homeworkname.getText();
 		String description = teacher_homeworkdescription.getText();
 		String Deadline = teacher_homeworkdeadline.getText();
-		String headcount = teacher_homeworkheadcount.getText();
+		String headcount = teacher_homeworkheadcount.getText();*/
 	}
 	
 	@FXML
 	private void homeworkModify() throws IOException{
-		String name = teacher_homeworkname.getText();
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+		try {
+			api.modifyHomework(homeworkid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+		/*String name = teacher_homeworkname.getText();
 		String description = teacher_homeworkdescription.getText();
 		String Deadline = teacher_homeworkdeadline.getText();
-		String headcount = teacher_homeworkheadcount.getText();
+		String headcount = teacher_homeworkheadcount.getText();*/
 	}
 	
 	@FXML
 	private void studentList() throws IOException{
-		
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+		Integer studentid = Integer.parseInt(teacher_studentid.getText());
+		List<Student> studentList = new ArrayList<Student>();
+		try {
+			studentList = api.getHomeworkStudents(studentid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+
+		teachertable.setEditable(true);
+
+		TableColumn<Student, String> usernameColumn = new TableColumn<Student, String>("Username");
+		usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+		TableColumn<Student, String> nameColumn = new TableColumn<Student, String>("Name");
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+		teachertable.getItems().clear();
+		teachertable.getColumns().clear();
+
+		teachertable.getColumns().addAll(nameColumn, usernameColumn);
+
+		ObservableList<Student> data = FXCollections.observableArrayList();
+
+
+		Student t = new Student();
+		for (int i = 0; i < studentList.size(); i++) {
+			t = new Student();
+			t.setUsername(studentList.get(i).getUsername());
+			t.setName(studentList.get(i).getName());
+			teachertable.getItems().add(t);
+		}
 	}
 	
 	@FXML
 	private void solutionList() throws IOException{
-		
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+		List<Solution> solutionList = new ArrayList<Solution>();
+		try {
+			solutionList = api.getSolution(solutionid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+
+		teachertable.setEditable(true);
+
+
+		TableColumn<Solution, Date> submittedColumn = new TableColumn<Solution, Date>("Submitted");
+		submittedColumn.setCellValueFactory(new PropertyValueFactory<>("submittedAt"));
+		TableColumn<Solution, String> statusColumn = new TableColumn<Solution, String>("Status");
+		statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+		teachertable.getItems().clear();
+		teachertable.getColumns().clear();
+
+		teachertable.getColumns().addAll(submittedColumn, statusColumn);
+
+		ObservableList<Solution> data = FXCollections.observableArrayList();
+
+
+		Solution t = new Solution();
+		for (int i = 0; i < solutionList.size(); i++) {
+			t = new Solution();
+			t.setStatus(solutionList.get(i).getStatus());
+			t.setSubmittedAt(solutionList.get(i).getSubmittedAt());
+			teachertable.getItems().add(t);
+		}
+	}
+
+	@FXML
+	private void solutionsList() throws IOException{
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+		List<Solution> solutionList = new ArrayList<Solution>();
+		try {
+			solutionList = api.getSolutions(solutionid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+
+		teachertable.setEditable(true);
+
+
+		TableColumn<Solution, Date> submittedColumn = new TableColumn<Solution, Date>("Submitted");
+		submittedColumn.setCellValueFactory(new PropertyValueFactory<>("submittedAt"));
+		TableColumn<Solution, String> statusColumn = new TableColumn<Solution, String>("Status");
+		statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+		teachertable.getItems().clear();
+		teachertable.getColumns().clear();
+
+		teachertable.getColumns().addAll(submittedColumn, statusColumn);
+
+		ObservableList<Solution> data = FXCollections.observableArrayList();
+
+
+		Solution t = new Solution();
+		for (int i = 0; i < solutionList.size(); i++) {
+			t = new Solution();
+			t.setStatus(solutionList.get(i).getStatus());
+			t.setSubmittedAt(solutionList.get(i).getSubmittedAt());
+			teachertable.getItems().add(t);
+		}
 	}
 	
 	@FXML
@@ -104,8 +400,22 @@ public class TeacherController {
 	
 	@FXML
 	private void solutionModify() throws IOException{
-		String status = teacher_solutionstatus.getText();
-		String notes = teacher_solutionnotes.getText();
+        try {
+            api.getToken("t", "t");
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+
+        Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+
+        try {
+            api.modifySolution(solutionid);
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+
+		/*String status = teacher_solutionstatus.getText();
+		String notes = teacher_solutionnotes.getText();*/
 	}
 	
 

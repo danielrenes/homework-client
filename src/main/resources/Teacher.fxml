@@ -30,6 +30,12 @@
                                     <TextField fx:id="teacher_coursedesc" prefHeight="25.0" prefWidth="154.0" />
                                  </children>
                               </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Id:" />
+                                    <TextField fx:id="teacher_courseid" prefHeight="25.0" prefWidth="182.0" />
+                                 </children>
+                              </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="34.0" prefWidth="318.0">
                                  <children>
                                     <Button mnemonicParsing="false" text="List" onAction="#courseList" />
@@ -61,6 +67,12 @@
                                     <TextField fx:id="teacher_homeworkname" prefHeight="25.0" prefWidth="182.0" />
                                  </children>
             				  </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Id:" />
+                                    <TextField fx:id="teacher_homeworkid" prefHeight="25.0" prefWidth="182.0" />
+                                 </children>
+                              </HBox>
             				  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
             					 <children>
                                     <Label text="Description:" />
@@ -89,6 +101,12 @@
                               </HBox>
                               <Separator prefWidth="200.0" />
                               <Label alignment="CENTER" prefHeight="17.0" prefWidth="216.0" text="Student" />
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Id:" />
+                                    <TextField fx:id="teacher_studentid" prefHeight="25.0" prefWidth="157.0" />
+                                 </children>
+                              </HBox>
                               <HBox prefHeight="25.0" prefWidth="217.0">
                                  <children>
                                     <Button mnemonicParsing="false" text="List" onAction="#studentList" />
@@ -102,6 +120,12 @@
                                     <TextField fx:id="teacher_solutionstatus" prefHeight="25.0" prefWidth="157.0" />
                                  </children>
             				  </HBox>
+                              <HBox prefHeight="27.0" prefWidth="217.0">
+                                 <children>
+                                    <Label text="Id:" />
+                                    <TextField fx:id="teacher_solutionid" prefHeight="25.0" prefWidth="157.0" />
+                                 </children>
+                              </HBox>
                               <HBox prefHeight="23.0" prefWidth="217.0">
             				     <children>
                                     <Label text="Notes:" />

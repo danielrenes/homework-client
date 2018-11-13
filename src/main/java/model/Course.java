@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONObject;
+
 public class Course {
     private String name;
     private String description;

@@ -25,6 +25,24 @@
                                     <TextField fx:id="admin_teachername" prefHeight="25.0" prefWidth="165.0" />
                                  </children>
                               </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Id:" />
+                                    <TextField fx:id="admin_teacherid" prefHeight="25.0" prefWidth="165.0" />
+                                 </children>
+                              </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Username:" />
+                                    <TextField fx:id="admin_teacherusername" prefHeight="25.0" prefWidth="165.0" />
+                                 </children>
+                              </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Password:" />
+                                    <TextField fx:id="admin_teacherpassword" prefHeight="25.0" prefWidth="165.0" />
+                                 </children>
+                              </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="34.0" prefWidth="318.0">
                                  <children>
                                     <Button mnemonicParsing="false" text="List" onAction="#teacherList" />
@@ -38,6 +56,24 @@
                                  <children>
                                     <Label text="Name:" />
                                     <TextField fx:id="admin_studentname" prefHeight="25.0" prefWidth="164.0" />
+                                 </children>
+                              </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Id:" />
+                                    <TextField fx:id="admin_studentid" prefHeight="25.0" prefWidth="164.0" />
+                                 </children>
+                              </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="username:" />
+                                    <TextField fx:id="admin_studentusername" prefHeight="25.0" prefWidth="164.0" />
+                                 </children>
+                              </HBox>
+                              <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="318.0">
+                                 <children>
+                                    <Label text="Password:" />
+                                    <TextField fx:id="admin_studentpassword" prefHeight="25.0" prefWidth="164.0" />
                                  </children>
                               </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="318.0">
