@@ -33,4 +33,12 @@ public class Course {
     public void setTeacherName(String teacherName) {
         this.teacherName = teacherName;
     }
+
+    public static Course fromJson(JSONObject jsonObject) {
+        Course course = new Course();
+        course.name = jsonObject.getString("name");
+        course.description = jsonObject.getString("description");
+        course.teacherName = jsonObject.getString("teacher");
+        return course;
+    }
 }

@@ -1,5 +1,9 @@
 package model;
 
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Homework {
@@ -9,6 +13,8 @@ public class Homework {
     private int headcount;
     private boolean selfAssignable;
     private String courseName;
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Homework() {
     }
@@ -59,5 +65,20 @@ public class Homework {
 
     public void setCourseName(String courseName) {
         this.courseName = courseName;
+    }
+
+    public static Homework fromJson(JSONObject jsonObject) {
+        Homework homework = new Homework();
+        homework.name = jsonObject.getString("name");
+        homework.courseName = jsonObject.getString("course");
+        homework.description = jsonObject.getString("description");
+        homework.headcount = jsonObject.getInt("headcount");
+        homework.selfAssignable = jsonObject.getBoolean("selfAssignable");
+        try {
+            homework.deadline = DATE_FORMAT.parse(jsonObject.getString("deadline"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return homework;
     }
 }
