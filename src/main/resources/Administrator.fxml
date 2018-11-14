@@ -5,7 +5,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="405.0" prefWidth="604.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.AdministratorController">
    <children>
       <VBox>
@@ -22,32 +21,32 @@
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
                                  <children>
                                     <Label text="Name:" />
-                                    <TextField fx:id="admin_teachername" prefHeight="25.0" prefWidth="165.0" />
+                                    <TextField fx:id="admin_teachername" prefHeight="25.0" prefWidth="155.0" />
                                  </children>
                               </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
                                  <children>
                                     <Label text="Id:" />
-                                    <TextField fx:id="admin_teacherid" prefHeight="25.0" prefWidth="165.0" />
+                                    <TextField fx:id="admin_teacherid" prefHeight="25.0" prefWidth="178.0" />
                                  </children>
                               </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
                                  <children>
                                     <Label text="Username:" />
-                                    <TextField fx:id="admin_teacherusername" prefHeight="25.0" prefWidth="165.0" />
+                                    <TextField fx:id="admin_teacherusername" prefHeight="25.0" prefWidth="124.0" />
                                  </children>
                               </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="27.0" prefWidth="318.0">
                                  <children>
                                     <Label text="Password:" />
-                                    <TextField fx:id="admin_teacherpassword" prefHeight="25.0" prefWidth="165.0" />
+                                    <TextField fx:id="admin_teacherpassword" prefHeight="25.0" prefWidth="134.0" />
                                  </children>
                               </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="34.0" prefWidth="318.0">
                                  <children>
-                                    <Button mnemonicParsing="false" text="List" onAction="#teacherList" />
-                                    <Button mnemonicParsing="false" text="Create" onAction="#teacherCreate" />
-                                    <Button mnemonicParsing="false" text="Delete" onAction="#teacherDelete" />
+                                    <Button mnemonicParsing="false" onAction="#teacherList" text="List" />
+                                    <Button mnemonicParsing="false" onAction="#teacherCreate" text="Create" />
+                                    <Button mnemonicParsing="false" onAction="#teacherDelete" text="Delete" />
                                  </children>
                               </HBox>
                               <Separator prefWidth="200.0" />
@@ -55,44 +54,39 @@
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="318.0">
                                  <children>
                                     <Label text="Name:" />
-                                    <TextField fx:id="admin_studentname" prefHeight="25.0" prefWidth="164.0" />
+                                    <TextField fx:id="admin_studentname" prefHeight="25.0" prefWidth="154.0" />
                                  </children>
                               </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="318.0">
                                  <children>
                                     <Label text="Id:" />
-                                    <TextField fx:id="admin_studentid" prefHeight="25.0" prefWidth="164.0" />
+                                    <TextField fx:id="admin_studentid" prefHeight="25.0" prefWidth="175.0" />
                                  </children>
                               </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="318.0">
                                  <children>
-                                    <Label text="username:" />
-                                    <TextField fx:id="admin_studentusername" prefHeight="25.0" prefWidth="164.0" />
+                                    <Label text="Username:" />
+                                    <TextField fx:id="admin_studentusername" prefHeight="25.0" prefWidth="124.0" />
                                  </children>
                               </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="318.0">
                                  <children>
                                     <Label text="Password:" />
-                                    <TextField fx:id="admin_studentpassword" prefHeight="25.0" prefWidth="164.0" />
+                                    <TextField fx:id="admin_studentpassword" prefHeight="25.0" prefWidth="135.0" />
                                  </children>
                               </HBox>
                               <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="318.0">
                                  <children>
-                                    <Button mnemonicParsing="false" text="List" onAction="#studentList" />
-                                    <Button mnemonicParsing="false" text="Create" onAction="#studentCreate" />
-                                    <Button mnemonicParsing="false" text="Delete" onAction="#studentDelete" />
+                                    <Button mnemonicParsing="false" onAction="#studentList" text="List" />
+                                    <Button mnemonicParsing="false" onAction="#studentCreate" text="Create" />
+                                    <Button mnemonicParsing="false" onAction="#studentDelete" text="Delete" />
                                  </children>
                               </HBox>
                            </children>
                         </VBox>
                      </content>
                   </ScrollPane>
-                  <TableView fx:id="admintable" layoutX="204.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="397.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="204.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="0.0">
-                    <columns>
-                      <TableColumn prefWidth="75.0" text="C1" />
-                      <TableColumn prefWidth="75.0" text="C2" />
-                    </columns>
-                  </TableView>
+                  <TableView fx:id="admintable" layoutX="204.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="397.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="204.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="0.0" />
                </children>
             </HBox>
          </children>

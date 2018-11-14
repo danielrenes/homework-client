@@ -22,29 +22,29 @@ import model.User;
 
 public class AdministratorController {
 
-	@FXML TextField admin_teachername;
-	@FXML TextField admin_studentname;
+    @FXML TextField admin_teachername;
+    @FXML TextField admin_studentname;
     @FXML TextField admin_teacherid;
     @FXML TextField admin_studentid;
     @FXML TextField admin_teacherusername;
     @FXML TextField admin_studentusername;
     @FXML TextField admin_teacherpassword;
     @FXML TextField admin_studentpassword;
-	@FXML TableView admintable;
+    @FXML TableView admintable;
 
 
 
     String serverIp = "localhost";
     int serverPort = 5000;
 
-    String username = "asd";
-    String password = "asd";
 
     public Api api = new Api(serverIp, serverPort);
 
 
-	@FXML
-	private void teacherList() throws IOException{
+
+
+    @FXML
+    private void teacherList() throws IOException{
         try {
             api.getToken("asd", "asd");
         } catch (ClientException e) {
@@ -52,7 +52,7 @@ public class AdministratorController {
         }
         List<Teacher> teacherList = new ArrayList<Teacher>();
         try {
-            teacherList = api.getTeachers();
+            teacherList = api.admin_getTeachers();
         } catch (ClientException e) {
             e.printStackTrace();
         }
@@ -78,47 +78,47 @@ public class AdministratorController {
             admintable.getItems().add(t);
         }
 
-	}
-	
-	@FXML
-	private void teacherCreate() throws IOException{
+    }
+
+    @FXML
+    private void teacherCreate() throws IOException{
         try {
             api.getToken("asd", "asd");
         } catch (ClientException e) {
             e.printStackTrace();
         }
 
-		String teachername = admin_teachername.getText();
+        String teachername = admin_teachername.getText();
         String teacherusername = admin_teacherusername.getText();
         String teacherpassword = admin_teacherpassword.getText();
 
         try {
-            api.createTeacher(teachername, teacherusername, teacherpassword);
+            api.admin_createTeacher(teachername, teacherusername, teacherpassword);
         } catch (ClientException e) {
             e.printStackTrace();
         }
-	}
-	
-	@FXML
-	private void teacherDelete() throws IOException{
+    }
+
+    @FXML
+    private void teacherDelete() throws IOException{
         try {
             api.getToken("asd", "asd");
         } catch (ClientException e) {
             e.printStackTrace();
         }
 
-		Integer teacherid = Integer.parseInt(admin_teacherid.getText());
+        Integer teacherid = Integer.parseInt(admin_teacherid.getText());
 
         try {
-            api.removeTeacher(teacherid);
+            api.admin_removeTeacher(teacherid);
         } catch (ClientException e) {
             e.printStackTrace();
         }
 
-	}
-	
-	@FXML
-	private void studentList() throws IOException{
+    }
+
+    @FXML
+    private void studentList() throws IOException{
         try {
             api.getToken("asd", "asd");
         } catch (ClientException e) {
@@ -126,7 +126,7 @@ public class AdministratorController {
         }
         List<Student> studentList = new ArrayList<Student>();
         try {
-            studentList = api.getStudents();
+            studentList = api.admin_getStudents();
         } catch (ClientException e) {
             e.printStackTrace();
         }
@@ -155,10 +155,10 @@ public class AdministratorController {
             admintable.getItems().add(t);
         }
 
-	}
-	
-	@FXML
-	private void studentCreate() throws IOException{
+    }
+
+    @FXML
+    private void studentCreate() throws IOException{
         try {
             api.getToken("asd", "asd");
         } catch (ClientException e) {
@@ -170,15 +170,15 @@ public class AdministratorController {
         String studentpassword = admin_studentpassword.getText();
 
         try {
-            api.createStudent(studentname, studentusername, studentpassword);
+            api.admin_createStudent(studentname, studentusername, studentpassword);
         } catch (ClientException e) {
             e.printStackTrace();
         }
 
-	}
-	
-	@FXML
-	private void studentDelete() throws IOException{
+    }
+
+    @FXML
+    private void studentDelete() throws IOException{
         try {
             api.getToken("asd", "asd");
         } catch (ClientException e) {
@@ -188,10 +188,10 @@ public class AdministratorController {
         Integer studentid = Integer.parseInt(admin_studentid.getText());
 
         try {
-            api.removeStudent(studentid);
+            api.admin_removeStudent(studentid);
         } catch (ClientException e) {
             e.printStackTrace();
         }
-	}
+    }
 
 }

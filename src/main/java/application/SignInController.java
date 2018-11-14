@@ -43,10 +43,8 @@ public class SignInController {
 	String serverIp = "localhost";
 	int serverPort = 5000;
 
-	String username = "asd";
-	String password = "asd";
 
-	public Api api = new Api(serverIp, serverPort);
+	private Api api = new Api(serverIp, serverPort);
 	
 	
 	

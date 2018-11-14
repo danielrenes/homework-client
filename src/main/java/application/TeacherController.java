@@ -10,6 +10,7 @@ import client.ClientException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -32,6 +33,7 @@ public class TeacherController {
 	@FXML TableView teachertable;
 	@FXML TextField teacher_studentid;
 	@FXML TextField teacher_solutionid;
+	@FXML CheckBox teacher_homeworkselfassignable;
 
 
 	String serverIp = "localhost";
@@ -42,7 +44,7 @@ public class TeacherController {
 
 	public Api api = new Api(serverIp, serverPort);
 
-	
+
 	@FXML
 	private void courseList() throws IOException{
 		try {
@@ -52,7 +54,7 @@ public class TeacherController {
 		}
 		List<Course> courseList = new ArrayList<Course>();
 		try {
-			courseList = api.getCourses();
+			courseList = api.teacher_getCourses();
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -85,7 +87,7 @@ public class TeacherController {
 			teachertable.getItems().add(t);
 		}
 	}
-	
+
 	@FXML
 	private void courseCreate() throws IOException{
 		try {
@@ -98,13 +100,13 @@ public class TeacherController {
 		String description = teacher_coursedesc.getText();
 
 		try {
-			api.createCourse(course, description);
+			api.teacher_createCourse(course, description);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	@FXML
 	private void courseDelete() throws IOException{
 		try {
@@ -116,28 +118,28 @@ public class TeacherController {
 		Integer courseid = Integer.parseInt(teacher_courseid.getText());
 
 		try {
-			api.removeCourse(courseid);
+			api.teacher_removeCourse(courseid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	@FXML
 	private void groupList() throws IOException{
-		
+
 	}
-	
+
 	@FXML
 	private void groupCreate() throws IOException{
 		String group = teacher_groupstudents.getText();
 	}
-	
+
 	@FXML
 	private void groupDelete() throws IOException{
 		String group = teacher_groupstudents.getText();
 	}
-	
+
 	@FXML
 	private void groupModify() throws IOException{
 		String group = teacher_groupstudents.getText();
@@ -156,7 +158,7 @@ public class TeacherController {
 		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
 
 		try {
-			homeworkList = api.getHomework(homeworkid);
+			homeworkList = api.teacher_getHomeworks(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -202,7 +204,7 @@ public class TeacherController {
 			teachertable.getItems().add(t);
 		}
 	}
-	
+
 	@FXML
 	private void homeworkCreate() throws IOException{
 		try {
@@ -212,20 +214,20 @@ public class TeacherController {
 		}
 
 		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+		String name = teacher_homeworkname.getText();
+		String description = teacher_homeworkdescription.getText();
+		String deadline = String.valueOf(teacher_homeworkdeadline.getText());
+		String headcount = teacher_homeworkheadcount.getText();
+		String selfAssignable = String.valueOf(teacher_homeworkselfassignable.isSelected());
 
 		try {
-			api.createHomework(homeworkid);
+			api.teacher_createHomework(name, description, deadline, headcount, selfAssignable, homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 
-
-		/*String name = teacher_homeworkname.getText();
-		String description = teacher_homeworkdescription.getText();
-		String Deadline = teacher_homeworkdeadline.getText();
-		String headcount = teacher_homeworkheadcount.getText();*/
 	}
-	
+
 	@FXML
 	private void homeworkDelete() throws IOException{
 		try {
@@ -237,17 +239,13 @@ public class TeacherController {
 		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
 
 		try {
-			api.removeHomework(homeworkid);
+			api.teacher_removeHomework(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 
-		/*String name = teacher_homeworkname.getText();
-		String description = teacher_homeworkdescription.getText();
-		String Deadline = teacher_homeworkdeadline.getText();
-		String headcount = teacher_homeworkheadcount.getText();*/
 	}
-	
+
 	@FXML
 	private void homeworkModify() throws IOException{
 		try {
@@ -257,19 +255,20 @@ public class TeacherController {
 		}
 
 		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+		String name = teacher_homeworkname.getText();
+		String description = teacher_homeworkdescription.getText();
+		String deadline = String.valueOf(teacher_homeworkdeadline.getText());
+		String headcount = teacher_homeworkheadcount.getText();
+		String selfAssignable = String.valueOf(teacher_homeworkselfassignable.isSelected());
 
 		try {
-			api.modifyHomework(homeworkid);
+			api.teacher_modifyHomework(name, description, deadline, headcount, selfAssignable, homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 
-		/*String name = teacher_homeworkname.getText();
-		String description = teacher_homeworkdescription.getText();
-		String Deadline = teacher_homeworkdeadline.getText();
-		String headcount = teacher_homeworkheadcount.getText();*/
 	}
-	
+
 	@FXML
 	private void studentList() throws IOException{
 		try {
@@ -280,7 +279,7 @@ public class TeacherController {
 		Integer studentid = Integer.parseInt(teacher_studentid.getText());
 		List<Student> studentList = new ArrayList<Student>();
 		try {
-			studentList = api.getHomeworkStudents(studentid);
+			studentList = api.teacher_getStudents(studentid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -309,7 +308,7 @@ public class TeacherController {
 			teachertable.getItems().add(t);
 		}
 	}
-	
+
 	@FXML
 	private void solutionList() throws IOException{
 		try {
@@ -320,7 +319,7 @@ public class TeacherController {
 		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
-			solutionList = api.getSolution(solutionid);
+			solutionList = api.teacher_getSolution(solutionid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -361,7 +360,7 @@ public class TeacherController {
 		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
-			solutionList = api.getSolutions(solutionid);
+			solutionList = api.teacher_getSolutions(solutionid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -391,32 +390,29 @@ public class TeacherController {
 			teachertable.getItems().add(t);
 		}
 	}
-	
-	@FXML
+
+	/*@FXML
 	private void solutionDelete() throws IOException{
 		String status = teacher_solutionstatus.getText();
 		String notes = teacher_solutionnotes.getText();
-	}
-	
+	}*/
+
 	@FXML
 	private void solutionModify() throws IOException{
-        try {
-            api.getToken("t", "t");
-        } catch (ClientException e) {
-            e.printStackTrace();
-        }
+		try {
+			api.getToken("t", "t");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
 
-        Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
 
-        try {
-            api.modifySolution(solutionid);
-        } catch (ClientException e) {
-            e.printStackTrace();
-        }
-
-		/*String status = teacher_solutionstatus.getText();
-		String notes = teacher_solutionnotes.getText();*/
+		try {
+			api.teacher_modifySolution(solutionid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 
 }

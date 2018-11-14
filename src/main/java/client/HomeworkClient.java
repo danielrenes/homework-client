@@ -19,7 +19,7 @@ public class HomeworkClient {
         }
 
         try {
-            for (Teacher teacher : api.getTeachers()) {
+            for (Teacher teacher : api.admin_getTeachers()) {
                 System.out.println(teacher.getName());
             }
         } catch (ClientException e) {

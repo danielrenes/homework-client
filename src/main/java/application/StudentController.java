@@ -33,6 +33,7 @@ public class StudentController {
 	@FXML TextField student_solutionid;
 	@FXML Button filechoose;
 	@FXML TableView studenttable;
+    File file;
 
 	String serverIp = "localhost";
 	int serverPort = 5000;
@@ -42,7 +43,7 @@ public class StudentController {
 
 	public Api api = new Api(serverIp, serverPort);
 	final FileChooser fileChooser = new FileChooser();
-	
+
 	@FXML
 	private void courseList() throws IOException{
 		try {
@@ -52,7 +53,7 @@ public class StudentController {
 		}
 		List<Course> courseList = new ArrayList<Course>();
 		try {
-			courseList = api.getAppliedCourses();
+			courseList = api.student_getAppliedCourses();
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -84,9 +85,9 @@ public class StudentController {
 			t.setTeacherName(courseList.get(i).getTeacherName());
 			studenttable.getItems().add(t);
 		}
-		
+
 	}
-	
+
 	@FXML
 	private void courseApply() throws IOException{
 		try {
@@ -98,15 +99,13 @@ public class StudentController {
 		Integer courseid = Integer.parseInt(student_courseid.getText());
 
 		try {
-			api.applyCourse(courseid);
+			api.student_applyCourse(courseid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 
-
-		//String course = student_coursecourse.getText();
 	}
-	
+
 	@FXML
 	private void courseDelete() throws IOException{
 		try {
@@ -118,16 +117,15 @@ public class StudentController {
 		Integer courseid = Integer.parseInt(student_courseid.getText());
 
 		try {
-			api.abandonCourse(courseid);
+			api.student_abandonCourse(courseid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 
-		//String course = student_coursecourse.getText();
 	}
-	
+
 	@FXML
-	private void homeworkList() throws IOException{
+	private void homeworkListForCourse() throws IOException{
 		try {
 			api.getToken("st", "st");
 		} catch (ClientException e) {
@@ -137,7 +135,7 @@ public class StudentController {
 		Integer homeworkid = Integer.parseInt(student_homeworkid.getText());
 
 		try {
-			homeworkList = api.getHomeworkForCourse(homeworkid);
+			homeworkList = api.student_getHomeworkForCourse(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -183,7 +181,65 @@ public class StudentController {
 			studenttable.getItems().add(t);
 		}
 	}
-	
+
+	@FXML
+	private void homeworkListForStudent() throws IOException{
+		try {
+			api.getToken("st", "st");
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+		List<Homework> homeworkList = new ArrayList<Homework>();
+
+		try {
+			homeworkList = api.student_getHomeworks();
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+
+		studenttable.setEditable(true);
+
+		TableColumn<Homework, String> nameColumn = new TableColumn<Homework, String>("Name");
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+		TableColumn<Homework, Date> deadlineColumn = new TableColumn<Homework, Date>("Deadline");
+		deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+
+		TableColumn<Homework, String> descriptionColumn = new TableColumn<Homework, String>("Description");
+		descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+		TableColumn<Homework, Integer> headcountColumn = new TableColumn<Homework, Integer>("Headcount");
+		headcountColumn.setCellValueFactory(new PropertyValueFactory<>("headcount"));
+
+		TableColumn<Homework, Boolean> selfAssignableColumn = new TableColumn<Homework, Boolean>("selfAssignable");
+		selfAssignableColumn.setCellValueFactory(new PropertyValueFactory<>("selfAssignable"));
+
+		TableColumn<Homework, String> courseNameColumn = new TableColumn<Homework, String>("Course name");
+		courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+
+		studenttable.getItems().clear();
+		studenttable.getColumns().clear();
+
+		studenttable.getColumns().addAll(nameColumn, deadlineColumn, descriptionColumn, headcountColumn, selfAssignableColumn, courseNameColumn);
+
+		ObservableList<Homework> data = FXCollections.observableArrayList();
+
+
+		Homework t = new Homework();
+		for (int i = 0; i < homeworkList.size(); i++) {
+			t = new Homework();
+			t.setName(homeworkList.get(i).getName());
+			t.setDescription(homeworkList.get(i).getDescription());
+			t.setCourseName(homeworkList.get(i).getCourseName());
+			t.setDeadline(homeworkList.get(i).getDeadline());
+			t.setHeadcount(homeworkList.get(i).getHeadcount());
+			t.setSelfAssignable(true);
+			studenttable.getItems().add(t);
+		}
+	}
+
+
 	@FXML
 	private void homeworkApply() throws IOException{
 		try {
@@ -195,15 +251,13 @@ public class StudentController {
 		Integer homeworkid = Integer.parseInt(student_homeworkid.getText());
 
 		try {
-			api.applyHomework(homeworkid);
+			api.student_applyHomework(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 
-
-		//String homework = student_homeworkhomework.getText();
 	}
-	
+
 	@FXML
 	private void homeworkDelete() throws IOException{
 		try {
@@ -215,33 +269,39 @@ public class StudentController {
 		Integer homeworkid = Integer.parseInt(student_homeworkid.getText());
 
 		try {
-			api.abandonHomework(homeworkid);
+			api.student_abandonHomework(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 
-
-		//String homework = student_homeworkhomework.getText();
 	}
-	
+
 	@FXML
 	private void homeworkUpload() throws IOException{
-		
+        try {
+            api.getToken("st", "st");
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            api.student_uploadHomewirk(file, file.getName());
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
 	}
-	
+
 	@FXML
 	private void homeworkChooseFile() throws IOException{
-		Stage stage = (Stage) filechoose.getScene().getWindow();
-	
-		/*FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Open Resource File");
-		Stage stage = (Stage) filechoose.getScene().getWindow();
-		fileChooser.showOpenDialog(stage);*/
-		File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-            System.out.println(file.getAbsolutePath() + file.getName());
-        }
-            
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Upload File");
+        Stage stage = (Stage) filechoose.getScene().getWindow();
+		fileChooser.showOpenDialog(stage);
+		file = fileChooser.showOpenDialog(stage);
+		if (file != null) {
+			System.out.println(file.getAbsolutePath() + file.getName());
+		}
+
 	}
 
 	@FXML
@@ -254,7 +314,7 @@ public class StudentController {
 		Integer solutionid = Integer.parseInt(student_solutionid.getText());
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
-			solutionList = api.getStudentSolution(solutionid);
+			solutionList = api.student_getSolution(solutionid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -295,7 +355,7 @@ public class StudentController {
 		Integer solutionid = Integer.parseInt(student_solutionid.getText());
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
-			solutionList = api.getStudentSolutions(solutionid);
+			solutionList = api.student_getSolutions(solutionid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -327,63 +387,5 @@ public class StudentController {
 	}
 
 
-
-	@FXML
-	private void homeworkListForStudent() throws IOException{
-		try {
-			api.getToken("st", "st");
-		} catch (ClientException e) {
-			e.printStackTrace();
-		}
-		List<Homework> homeworkList = new ArrayList<Homework>();
-
-		try {
-			homeworkList = api.getStudentHomework();
-		} catch (ClientException e) {
-			e.printStackTrace();
-		}
-
-
-		studenttable.setEditable(true);
-
-		TableColumn<Homework, String> nameColumn = new TableColumn<Homework, String>("Name");
-		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-		TableColumn<Homework, Date> deadlineColumn = new TableColumn<Homework, Date>("Deadline");
-		deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
-
-		TableColumn<Homework, String> descriptionColumn = new TableColumn<Homework, String>("Description");
-		descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-
-		TableColumn<Homework, Integer> headcountColumn = new TableColumn<Homework, Integer>("Headcount");
-		headcountColumn.setCellValueFactory(new PropertyValueFactory<>("headcount"));
-
-		TableColumn<Homework, Boolean> selfAssignableColumn = new TableColumn<Homework, Boolean>("selfAssignable");
-		selfAssignableColumn.setCellValueFactory(new PropertyValueFactory<>("selfAssignable"));
-
-		TableColumn<Homework, String> courseNameColumn = new TableColumn<Homework, String>("Course name");
-		courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
-
-		studenttable.getItems().clear();
-		studenttable.getColumns().clear();
-
-		studenttable.getColumns().addAll(nameColumn, deadlineColumn, descriptionColumn, headcountColumn, selfAssignableColumn, courseNameColumn);
-
-		ObservableList<Homework> data = FXCollections.observableArrayList();
-
-
-		Homework t = new Homework();
-		for (int i = 0; i < homeworkList.size(); i++) {
-			t = new Homework();
-			t.setName(homeworkList.get(i).getName());
-			t.setDescription(homeworkList.get(i).getDescription());
-			t.setCourseName(homeworkList.get(i).getCourseName());
-			t.setDeadline(homeworkList.get(i).getDeadline());
-			t.setHeadcount(homeworkList.get(i).getHeadcount());
-			t.setSelfAssignable(true);
-			studenttable.getItems().add(t);
-		}
-	}
-	
 
 }
