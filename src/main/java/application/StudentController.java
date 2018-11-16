@@ -3,10 +3,7 @@ package application;
 import client.Api;
 import client.ClientException;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -63,7 +60,17 @@ public class StudentController {
 
 	@FXML
 	private void courseApply() throws IOException{
+		if(student_courseid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+			alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer courseid = Integer.parseInt(student_courseid.getText());
+
+        student_courseid.setText("");
 
 		try {
 			api.student_applyCourse(courseid);
@@ -74,7 +81,17 @@ public class StudentController {
 
 	@FXML
 	private void courseDelete() throws IOException{
+		if(student_courseid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+			alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer courseid = Integer.parseInt(student_courseid.getText());
+
+        student_courseid.setText("");
 
 		try {
 			api.student_abandonCourse(courseid);
@@ -87,7 +104,17 @@ public class StudentController {
 	@FXML
 	private void homeworkListForCourse() throws IOException{
 		List<Homework> homeworkList = new ArrayList<Homework>();
+		if(student_homeworkid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+			alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer homeworkid = Integer.parseInt(student_homeworkid.getText());
+
+        student_homeworkid.setText("");
 
 		try {
 			homeworkList = api.student_getHomeworkForCourse(homeworkid);
@@ -169,7 +196,17 @@ public class StudentController {
 
 	@FXML
 	private void homeworkApply() throws IOException{
+		if(student_homeworkid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+			alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer homeworkid = Integer.parseInt(student_homeworkid.getText());
+
+        student_homeworkid.setText("");
 
 		try {
 			api.student_applyHomework(homeworkid);
@@ -180,7 +217,17 @@ public class StudentController {
 
 	@FXML
 	private void homeworkDelete() throws IOException{
+		if(student_homeworkid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+			alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer homeworkid = Integer.parseInt(student_homeworkid.getText());
+
+        student_homeworkid.setText("");
 
 		try {
 			api.student_abandonHomework(homeworkid);
@@ -213,7 +260,18 @@ public class StudentController {
 
 	@FXML
 	private void solutionGet() throws IOException{
+		if(student_solutionid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+			alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer solutionid = Integer.parseInt(student_solutionid.getText());
+
+        student_solutionid.setText("");
+
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
 			solutionList = api.student_getSolution(solutionid);
@@ -239,7 +297,18 @@ public class StudentController {
 
 	@FXML
 	private void solutionList() throws IOException{
+		if(student_solutionid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+			alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer solutionid = Integer.parseInt(student_solutionid.getText());
+
+        student_solutionid.setText("");
+
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
 			solutionList = api.student_getSolutions(solutionid);

@@ -3,10 +3,7 @@ package application;
 import client.Api;
 import client.ClientException;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Course;
 import model.Homework;
@@ -69,8 +66,19 @@ public class TeacherController {
 
 	@FXML
 	private void courseCreate() throws IOException{
+		if(teacher_coursename.getText().isEmpty() || teacher_coursedesc.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("Name, Description");
+			alert.showAndWait();
+			return;
+		}
 		String course = teacher_coursename.getText();
 		String description = teacher_coursedesc.getText();
+
+        teacher_coursename.setText("");
+        teacher_coursedesc.setText("");
 
 		try {
 			api.teacher_createCourse(course, description);
@@ -82,7 +90,16 @@ public class TeacherController {
 
 	@FXML
 	private void courseDelete() throws IOException{
+		if(teacher_courseid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer courseid = Integer.parseInt(teacher_courseid.getText());
+        teacher_courseid.setText("");
 
 		try {
 			api.teacher_removeCourse(courseid);
@@ -117,7 +134,17 @@ public class TeacherController {
 	@FXML
 	private void homeworkList() throws IOException{
 		List<Homework> homeworkList = new ArrayList<Homework>();
+		if(teacher_homeworkid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+        teacher_homeworkid.setText("");
 
 		try {
 			homeworkList = api.teacher_getHomeworks(homeworkid);
@@ -158,12 +185,32 @@ public class TeacherController {
 
 	@FXML
 	private void homeworkCreate() throws IOException{
+		if(teacher_homeworkid.getText().isEmpty() ||
+				teacher_homeworkname.getText().isEmpty() ||
+				teacher_homeworkdescription.getText().isEmpty() ||
+				teacher_homeworkdeadline.getText().isEmpty() ||
+				teacher_homeworkheadcount.getText().isEmpty() ||
+				teacher_homeworkselfassignable.getText().isEmpty()
+		){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID, Name, Description, Deadline, Headcount, SelfAssignable");
+			alert.showAndWait();
+			return;
+		}
 		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
 		String name = teacher_homeworkname.getText();
 		String description = teacher_homeworkdescription.getText();
 		String deadline = String.valueOf(teacher_homeworkdeadline.getText());
 		String headcount = teacher_homeworkheadcount.getText();
 		String selfAssignable = String.valueOf(teacher_homeworkselfassignable.isSelected());
+
+        teacher_homeworkid.setText("");
+        teacher_homeworkname.setText("");
+        teacher_homeworkdescription.setText("");
+        teacher_homeworkdeadline.setText("");
+        teacher_homeworkheadcount.setText("");
 
 		try {
 			api.teacher_createHomework(name, description, deadline, headcount, selfAssignable, homeworkid);
@@ -175,7 +222,17 @@ public class TeacherController {
 
 	@FXML
 	private void homeworkDelete() throws IOException{
+		if(teacher_homeworkid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+		teacher_homeworkid.setText("");
 
 		try {
 			api.teacher_removeHomework(homeworkid);
@@ -187,12 +244,32 @@ public class TeacherController {
 
 	@FXML
 	private void homeworkModify() throws IOException{
+		if(teacher_homeworkid.getText().isEmpty() ||
+				teacher_homeworkname.getText().isEmpty() ||
+				teacher_homeworkdescription.getText().isEmpty() ||
+				teacher_homeworkdeadline.getText().isEmpty() ||
+				teacher_homeworkheadcount.getText().isEmpty() ||
+				teacher_homeworkselfassignable.getText().isEmpty()
+		){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID, Name, Description, Deadline, Headcount, SelfAssignable");
+			alert.showAndWait();
+			return;
+		}
 		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
 		String name = teacher_homeworkname.getText();
 		String description = teacher_homeworkdescription.getText();
 		String deadline = String.valueOf(teacher_homeworkdeadline.getText());
 		String headcount = teacher_homeworkheadcount.getText();
 		String selfAssignable = String.valueOf(teacher_homeworkselfassignable.isSelected());
+
+        teacher_homeworkid.setText("");
+        teacher_homeworkname.setText("");
+        teacher_homeworkdescription.setText("");
+        teacher_homeworkdeadline.setText("");
+        teacher_homeworkheadcount.setText("");
 
 		try {
 			api.teacher_modifyHomework(name, description, deadline, headcount, selfAssignable, homeworkid);
@@ -204,7 +281,18 @@ public class TeacherController {
 
 	@FXML
 	private void studentList() throws IOException{
+		if(teacher_studentid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer studentid = Integer.parseInt(teacher_studentid.getText());
+
+        teacher_studentid.setText("");
+
 		List<Student> studentList = new ArrayList<Student>();
 		try {
 			studentList = api.teacher_getStudents(studentid);
@@ -231,7 +319,18 @@ public class TeacherController {
 
 	@FXML
 	private void solutionList() throws IOException{
+		if(teacher_solutionid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+
+        teacher_solutionid.setText("");
+
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
 			solutionList = api.teacher_getSolution(solutionid);
@@ -258,7 +357,18 @@ public class TeacherController {
 
 	@FXML
 	private void solutionsList() throws IOException{
+		if(teacher_solutionid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+
+        teacher_solutionid.setText("");
+
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
 			solutionList = api.teacher_getSolutions(solutionid);
@@ -285,7 +395,18 @@ public class TeacherController {
 
 	@FXML
 	private void solutionModify() throws IOException{
+		if(teacher_solutionid.getText().isEmpty()){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle("Warning");
+			alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID");
+			alert.showAndWait();
+			return;
+		}
 		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+
+        teacher_solutionid.setText("");
+
 
 		try {
 			api.teacher_modifySolution(solutionid);
