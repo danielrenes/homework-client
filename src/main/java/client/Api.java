@@ -18,6 +18,8 @@ public class Api {
     private final int serverPort;
 
     private OkHttpClient okHttpClient = new OkHttpClient();
+
+    private String credential;
     private String token;
 
     private static Api instance;
@@ -35,20 +37,36 @@ public class Api {
         return instance;
     }
 
-    public boolean haveToken(){
-        return (!token.equals(""));
+    private void checkToken() throws ClientException {
+        if (token == null) {
+            if (credential == null) {
+                throw new ClientException("Token and credential are null");
+            }
+        } else {
+            Request request = new Request.Builder()
+                    .url(String.format("http://%s:%d/api/v1/auth/token", serverIp, serverPort))
+                    .header("Authorization", "Bearer " + token)
+                    .get()
+                    .build();
+
+            Response response;
+
+            try {
+                response = okHttpClient.newCall(request).execute();
+            } catch (IOException e) {
+                throw new ClientException("Could not execute request");
+            }
+
+            if (response.code() != 200) {
+                getToken();
+            }
+        }
     }
 
-    public void setToken(String t){
-        token = t;
-    }
-
-    public String getToken(){
-        return token;
-    }
-
-    public void getToken(String username, String password) throws ClientException {
-        String credential = Credentials.basic(username, password);
+    private void getToken() throws ClientException {
+        if (credential == null) {
+            throw new ClientException("Credential needed for basic auth");
+        }
 
         Request request = new Request.Builder()
                 .url(String.format("http://%s:%d/api/v1/auth/token", serverIp, serverPort))
@@ -76,15 +94,18 @@ public class Api {
         }
     }
 
+    public void getToken(String username, String password) throws ClientException {
+        credential = Credentials.basic(username, password);
+        getToken();
+    }
+
 
     /*--------------------------------------------Begin of Administrator methods--------------------------------------------*/
 
 
     //admin-get_teachers()
     public List<Teacher> admin_getTeachers() throws ClientException {
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        checkToken();
 
         List<Teacher> teachers = new ArrayList<>();
         String nextUrl = admin_getTeachersNext(String.format("http://%s:%d/api/v1/admin/teachers",
@@ -135,6 +156,8 @@ public class Api {
 
     //admin-create_teacher()
     public void admin_createTeacher(String name, String username, String password) throws ClientException {
+        checkToken();
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", name);
         jsonObject.put("username", username);
@@ -163,9 +186,9 @@ public class Api {
 
     }
 
-
     //admin-remove_teacher(id)
     public void admin_removeTeacher(Integer id) throws ClientException {
+        checkToken();
 
         Request request = new Request.Builder()
                 .url(String.format("http://%s:%d/api/v1/admin/teacher/" + String.valueOf(id), serverIp, serverPort))
@@ -188,10 +211,10 @@ public class Api {
 
     }
 
-
-
     //admin-get_students()
     public List<Student> admin_getStudents() throws ClientException {
+        checkToken();
+
         if (token == null) {
             throw new ClientException("Authentication token is needed");
         }
@@ -248,6 +271,7 @@ public class Api {
 
     //admin-remove_student(id)
     public void admin_removeStudent(Integer id) throws ClientException {
+        checkToken();
 
         Request request = new Request.Builder()
                 .url(String.format("http://%s:%d/api/v1/admin/student/" + String.valueOf(id), serverIp, serverPort))
@@ -273,6 +297,8 @@ public class Api {
 
     //admin-create_studetns()
     public void admin_createStudent(String name, String username, String password) throws ClientException {
+        checkToken();
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", name);
         jsonObject.put("username", username);
@@ -310,6 +336,8 @@ public class Api {
 
     //teacher-get_courses()
     public List<Course> teacher_getCourses() throws ClientException {
+        checkToken();
+
         if (token == null) {
             throw new ClientException("Authentication token is needed");
         }
@@ -365,6 +393,8 @@ public class Api {
 
     //teacher-create_course()
     public void teacher_createCourse(String name, String description) throws ClientException {
+        checkToken();
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", name);
         jsonObject.put("description", description);
@@ -394,6 +424,7 @@ public class Api {
 
     //teacher-remove_course(id)
     public void teacher_removeCourse(Integer id) throws ClientException {
+        checkToken();
 
         Request request = new Request.Builder()
                 .url(String.format("http://%s:%d/api/v1/teacher/course/" + String.valueOf(id), serverIp, serverPort))
@@ -419,6 +450,8 @@ public class Api {
 
     //teacher-get_homeworks(id)
     public List<Homework> teacher_getHomeworks(Integer id) throws ClientException {
+        checkToken();
+
         if (token == null) {
             throw new ClientException("Authentication token is needed");
         }
@@ -474,6 +507,8 @@ public class Api {
 
     //teacher-create_homework(id)
     public void teacher_createHomework(String name, String description, String deadline, String headcount, String selfAssignable, Integer id) throws ClientException {
+        checkToken();
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", name);
         jsonObject.put("description", description);
@@ -507,6 +542,7 @@ public class Api {
 
     //teacher-remove_homework(id)
     public void teacher_removeHomework(Integer id) throws ClientException {
+        checkToken();
 
         Request request = new Request.Builder()
                 .url(String.format("http://%s:%d/api/v1/teacher/homework/" + String.valueOf(id), serverIp, serverPort))
@@ -532,6 +568,8 @@ public class Api {
 
     //teacher-modify_homework(id)
     public void teacher_modifyHomework(String name, String description, String deadline, String headcount, String selfAssignable, Integer id) throws ClientException {
+        checkToken();
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", name);
         jsonObject.put("description", description);
@@ -566,6 +604,8 @@ public class Api {
 
     //teacher-get_solution(id)
     public List<Solution> teacher_getSolution(Integer id) throws ClientException {
+        checkToken();
+
         if (token == null) {
             throw new ClientException("Authentication token is needed");
         }
@@ -622,9 +662,7 @@ public class Api {
 
     //teacher-get_solutions(id)
     public List<Solution> teacher_getSolutions(Integer id) throws ClientException {
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        checkToken();
 
         List<Solution> solutions = new ArrayList<>();
         String nextUrl = teacher_getSolutionsNexts(String.format("http://%s:%d/api/v1/teacher/homework/" + String.valueOf(id) + "/solutions",
@@ -676,6 +714,7 @@ public class Api {
 
     //teacher-modify_solution(id)
     public void teacher_modifySolution(Integer id) throws ClientException {
+        checkToken();
 
         JSONObject jsonObject = new JSONObject();
 
@@ -705,9 +744,7 @@ public class Api {
 
     //teacher-get_students(id)
     public List<Student> teacher_getStudents(Integer id) throws ClientException {
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        checkToken();
 
         List<Student> students = new ArrayList<>();
         String nextUrl = teacher_getStudentsNext(String.format("http://%s:%d/api/v1/teacher/course/" + String.valueOf(id) + "/students",
@@ -769,9 +806,7 @@ public class Api {
 
     //student-get_applied_courses()
     public List<Course> student_getAppliedCourses() throws ClientException {
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        checkToken();
 
         List<Course> courses = new ArrayList<>();
         String nextUrl = student_getAppliedCoursesNext(String.format("http://%s:%d/api/v1/student/courses",
@@ -823,6 +858,8 @@ public class Api {
 
     //student-apply_for_course(id)
     public void student_applyCourse(Integer id) throws ClientException {
+        checkToken();
+
         JSONObject jsonObject = new JSONObject();
 
         RequestBody formBody = RequestBody.create(JSON, jsonObject.toString());
@@ -851,6 +888,7 @@ public class Api {
 
     //student-abandon_course(id)
     public void student_abandonCourse(Integer id) throws ClientException {
+        checkToken();
 
         Request request = new Request.Builder()
                 .url(String.format("http://%s:%d/api/v1/student/course/" + String.valueOf(id), serverIp, serverPort))
@@ -875,7 +913,8 @@ public class Api {
 
 
     //student-upload-homework
-    public void student_uploadHomewirk(File f, String fileName) throws ClientException {
+    public void student_uploadHomework(File f, String fileName) throws ClientException {
+        checkToken();
 
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("file", fileName, RequestBody.create(MEDIA_TYPE_PDF, f))
@@ -904,9 +943,7 @@ public class Api {
 
     //student-get_homeworks_for_course(id)
     public List<Homework> student_getHomeworkForCourse(Integer id) throws ClientException {
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        checkToken();
 
         List<Homework> homeworks = new ArrayList<>();
         String nextUrl = student_getHomeworksForCourseNext(String.format("http://%s:%d/api/v1/student/course/" + String.valueOf(id) + "/homeworks",
@@ -961,6 +998,8 @@ public class Api {
 
     //student-apply_for_homework(id)
     public void student_applyHomework(Integer id) throws ClientException {
+        checkToken();
+
         JSONObject jsonObject = new JSONObject();
 
         RequestBody formBody = RequestBody.create(JSON, jsonObject.toString());
@@ -989,6 +1028,7 @@ public class Api {
 
     //student-abandon_homework(id)
     public void student_abandonHomework(Integer id) throws ClientException {
+        checkToken();
 
         Request request = new Request.Builder()
                 .url(String.format("http://%s:%d/api/v1/student/homework/" + String.valueOf(id), serverIp, serverPort))
@@ -1018,9 +1058,7 @@ public class Api {
 
     //student-get_homeworks()
     public List<Homework> student_getHomeworks() throws ClientException {
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        checkToken();
 
         List<Homework> homeworks = new ArrayList<>();
         String nextUrl = student_getHomeworksNext(String.format("http://%s:%d/api/v1/student/homeworks",
@@ -1073,9 +1111,7 @@ public class Api {
 
     //student-get_solutions(id)
     public List<Solution> student_getSolutions(Integer id) throws ClientException {
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        checkToken();
 
         List<Solution> solutions = new ArrayList<>();
         String nextUrl = student_getSolutionsNexts(String.format("http://%s:%d/api/v1/student/homework/" + String.valueOf(id) + "/solutions",
@@ -1127,9 +1163,7 @@ public class Api {
 
     //student-get_solution(id)
     public List<Solution> student_getSolution(Integer id) throws ClientException {
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        checkToken();
 
         List<Solution> solutions = new ArrayList<>();
         String nextUrl = student_getSolutionsNext(String.format("http://%s:%d/api/v1/student/solution/" + String.valueOf(id),

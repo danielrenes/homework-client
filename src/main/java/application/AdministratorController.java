@@ -2,8 +2,6 @@ package application;
 
 import client.Api;
 import client.ClientException;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -32,19 +30,13 @@ public class AdministratorController {
     private final Api api = Api.getInstance();
 
     @FXML
-    private void teacherList() throws IOException{
-//        try {
-//            api.getToken("asd", "asd");
-//        } catch (ClientException e) {
-//            e.printStackTrace();
-//        }
+    private void teacherList() throws IOException {
         List<Teacher> teacherList = new ArrayList<Teacher>();
         try {
             teacherList = api.admin_getTeachers();
         } catch (ClientException e) {
             e.printStackTrace();
         }
-
 
         admintable.setEditable(true);
 
@@ -58,19 +50,13 @@ public class AdministratorController {
         admintable.getItems().clear();
         admintable.getColumns().clear();
 
-        admintable.getColumns().addAll(nameColumn, usernameColumn, idColumn);
+        admintable.getColumns().addAll(idColumn, nameColumn, usernameColumn);
 
         admintable.getItems().addAll(teacherList);
     }
 
     @FXML
     private void teacherCreate() throws IOException{
-//        try {
-//            api.getToken("asd", "asd");
-//        } catch (ClientException e) {
-//            e.printStackTrace();
-//        }
-
         String teachername = admin_teachername.getText();
         String teacherusername = admin_teacherusername.getText();
         String teacherpassword = admin_teacherpassword.getText();
@@ -84,12 +70,6 @@ public class AdministratorController {
 
     @FXML
     private void teacherDelete() throws IOException{
-//        try {
-//            api.getToken("asd", "asd");
-//        } catch (ClientException e) {
-//            e.printStackTrace();
-//        }
-
         Integer teacherid = Integer.parseInt(admin_teacherid.getText());
 
         try {
@@ -102,11 +82,6 @@ public class AdministratorController {
 
     @FXML
     private void studentList() throws IOException{
-//        try {
-//            api.getToken("asd", "asd");
-//        } catch (ClientException e) {
-//            e.printStackTrace();
-//        }
         List<Student> studentList = new ArrayList<Student>();
         try {
             studentList = api.admin_getStudents();
@@ -117,6 +92,8 @@ public class AdministratorController {
 
         admintable.setEditable(true);
 
+        TableColumn<Student, String> idColumn = new TableColumn<Student, String>("ID");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Student, String> usernameColumn = new TableColumn<Student, String>("Username");
         usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
         TableColumn<Student, String> nameColumn = new TableColumn<Student, String>("Name");
@@ -125,29 +102,13 @@ public class AdministratorController {
         admintable.getItems().clear();
         admintable.getColumns().clear();
 
-        admintable.getColumns().addAll(nameColumn, usernameColumn);
+        admintable.getColumns().addAll(idColumn, nameColumn, usernameColumn);
 
-        ObservableList<Student> data = FXCollections.observableArrayList();
-
-
-        Student t = new Student();
-        for (int i = 0; i < studentList.size(); i++) {
-            t = new Student();
-            t.setUsername(studentList.get(i).getUsername());
-            t.setName(studentList.get(i).getName());
-            admintable.getItems().add(t);
-        }
-
+        admintable.getItems().addAll(studentList);
     }
 
     @FXML
     private void studentCreate() throws IOException{
-//        try {
-//            api.getToken("asd", "asd");
-//        } catch (ClientException e) {
-//            e.printStackTrace();
-//        }
-
         String studentname = admin_studentname.getText();
         String studentusername = admin_studentusername.getText();
         String studentpassword = admin_studentpassword.getText();
@@ -162,12 +123,6 @@ public class AdministratorController {
 
     @FXML
     private void studentDelete() throws IOException{
-//        try {
-//            api.getToken("asd", "asd");
-//        } catch (ClientException e) {
-//            e.printStackTrace();
-//        }
-
         Integer studentid = Integer.parseInt(admin_studentid.getText());
 
         try {

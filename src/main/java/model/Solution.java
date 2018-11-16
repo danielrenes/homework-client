@@ -7,12 +7,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Solution {
+    private int id;
     private Date submittedAt;
     private String status;
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Solution() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Date getSubmittedAt() {
@@ -33,6 +42,7 @@ public class Solution {
 
     public static Solution fromJson(JSONObject jsonObject) {
         Solution solution = new Solution();
+        solution.id = jsonObject.getInt("id");
         solution.status = jsonObject.getString("status");
         try {
             solution.submittedAt = DATE_FORMAT.parse(jsonObject.getString("submitted_at"));

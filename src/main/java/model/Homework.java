@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Homework {
+    private int id;
     private String name;
     private String description;
     private Date deadline;
@@ -17,6 +18,14 @@ public class Homework {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Homework() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -69,6 +78,7 @@ public class Homework {
 
     public static Homework fromJson(JSONObject jsonObject) {
         Homework homework = new Homework();
+        homework.id = jsonObject.getInt("id");
         homework.name = jsonObject.getString("name");
         homework.courseName = jsonObject.getString("course");
         homework.description = jsonObject.getString("description");

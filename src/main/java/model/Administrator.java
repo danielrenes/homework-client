@@ -8,6 +8,7 @@ public class Administrator extends User {
 
     public static Administrator fromJson(JSONObject jsonObject) {
         Administrator administrator = new Administrator();
+        administrator.id = jsonObject.getInt(("id"));
         administrator.name = jsonObject.getString("name");
         administrator.username = jsonObject.getString("username");
         return administrator;
