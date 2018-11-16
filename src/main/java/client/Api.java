@@ -5,23 +5,34 @@ import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
 
 public class Api {
-    private OkHttpClient okHttpClient = new OkHttpClient();
-    private String serverIp;
-    private int serverPort;
-    private String token;
-
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_PDF = MediaType.parse("image/pdf");
 
-    public Api(String serverIp, int serverPort) {
+    private final String serverIp;
+    private final int serverPort;
+
+    private OkHttpClient okHttpClient = new OkHttpClient();
+    private String token;
+
+    private static Api instance;
+
+    private Api(String serverIp, int serverPort) {
         this.serverIp = serverIp;
         this.serverPort = serverPort;
+    }
+
+    public static Api getInstance() {
+        if (instance == null) {
+            // TODO: read server ip and port from config file
+            instance = new Api("localhost", 5000);
+        }
+        return instance;
     }
 
     public boolean haveToken(){

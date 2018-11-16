@@ -35,13 +35,10 @@ public class StudentController {
 	@FXML TableView studenttable;
     File file;
 
-	String serverIp = "localhost";
-	int serverPort = 5000;
-
 	String username = "st";
 	String password = "st";
 
-	public Api api = new Api(serverIp, serverPort);
+	private final Api api = Api.getInstance();
 	final FileChooser fileChooser = new FileChooser();
 
 	@FXML

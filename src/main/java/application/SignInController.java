@@ -40,15 +40,6 @@ public class SignInController {
 	private void initialize(){
 	}
 
-	String serverIp = "localhost";
-	int serverPort = 5000;
-
-
-	private Api api = new Api(serverIp, serverPort);
-	
-	
-	
-
 	@FXML
 	private int signIn() throws IOException{ 
 		adminradiobutton.setToggleGroup(signin);
@@ -64,35 +55,31 @@ public class SignInController {
 			errortextlabel.setText(errortextlabel.getText() + "\nPassword field is empty!");
 			return -1;
 		}
-		
+
 		RadioButton selectedRadioButton = (RadioButton) signin.getSelectedToggle();
-		if(selectedRadioButton != null) {
+		if (selectedRadioButton != null) {
 			toogleGroupValue = selectedRadioButton.getText();
 
 			try {
-				api.getToken(usernametextfield.getText(), passwordfield.getText());
+				Api.getInstance().getToken(usernametextfield.getText(), passwordfield.getText());
 			} catch (ClientException e) {
 				e.printStackTrace();
 				errortextlabel.setText(errortextlabel.getText() + "\nIncorrect username or password!");
 				return -1;
 			}
 
-			if(toogleGroupValue.equals("Administrator")){
+			if (toogleGroupValue.equals("Administrator")){
 				loadAdministratorPane();
-			}
-			else if (toogleGroupValue.equals("Teacher")){
+			} else if (toogleGroupValue.equals("Teacher")){
 				loadTeacherPane();
-			}
-			else if(toogleGroupValue.equals("Student")){
+			} else if (toogleGroupValue.equals("Student")){
 				loadStudentPane();
 			}
 		} else {
 			errortextlabel.setText(errortextlabel.getText() + "\nPlease choose the role!");
 			return -1;
 		}
-		
 
-		
 		return 0;
 	}
 	
@@ -103,6 +90,7 @@ public class SignInController {
 		Scene scene = new Scene(pane,600,600);
 		stage.setScene(scene);
 	}
+
 	@FXML
 	private void loadTeacherPane() throws IOException{
 		pane = FXMLLoader.load(getClass().getClassLoader().getResource("Teacher.fxml"));
@@ -110,6 +98,7 @@ public class SignInController {
 		Scene scene = new Scene(pane,600,600);
 		stage.setScene(scene);
 	}
+
 	@FXML
 	private void loadStudentPane() throws IOException{
 		pane = FXMLLoader.load(getClass().getClassLoader().getResource("Student.fxml"));

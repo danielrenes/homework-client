@@ -1,21 +1,13 @@
 package application;
-	
-import client.Api;
+
 import javafx.application.Application;
-import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.fxml.FXMLLoader;
+import javafx.stage.Stage;
 
 
 public class Main extends Application {
-	String serverIp = "localhost";
-	int serverPort = 5000;
-
-	/*String username = "asd";
-	String password = "asd";*/
-
-	public Api api = new Api(serverIp, serverPort);
 
 	@Override
 	public void start(Stage primaryStage) {

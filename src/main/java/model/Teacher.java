@@ -8,6 +8,7 @@ public class Teacher extends User {
 
     public static Teacher fromJson(JSONObject jsonObject) {
         Teacher teacher = new Teacher();
+        teacher.id = jsonObject.getInt("id");
         teacher.name = jsonObject.getString("name");
         teacher.username = jsonObject.getString("username");
         return teacher;

@@ -35,15 +35,10 @@ public class TeacherController {
 	@FXML TextField teacher_solutionid;
 	@FXML CheckBox teacher_homeworkselfassignable;
 
-
-	String serverIp = "localhost";
-	int serverPort = 5000;
-
 	String username = "t";
 	String password = "t";
 
-	public Api api = new Api(serverIp, serverPort);
-
+	private final Api api = Api.getInstance();
 
 	@FXML
 	private void courseList() throws IOException{
