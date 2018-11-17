@@ -35,6 +35,9 @@ public class TeacherController {
 
 	private final Api api = Api.getInstance();
 
+	public TeacherController() throws ClientException {
+	}
+
 	@FXML
 	private void courseList() throws IOException{
 		List<Course> courseList = new ArrayList<Course>();
@@ -318,7 +321,7 @@ public class TeacherController {
 	}
 
 	@FXML
-	private void solutionList() throws IOException{
+	private void solutionGet() throws IOException{
 		if(teacher_solutionid.getText().isEmpty()){
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
@@ -333,7 +336,7 @@ public class TeacherController {
 
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
-			solutionList = api.teacher_getSolution(solutionid);
+			solutionList.add(api.teacher_getSolution(solutionid));
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -356,7 +359,7 @@ public class TeacherController {
 	}
 
 	@FXML
-	private void solutionsList() throws IOException{
+	private void solutionList() throws IOException{
 		if(teacher_solutionid.getText().isEmpty()){
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
@@ -404,12 +407,14 @@ public class TeacherController {
 			return;
 		}
 		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+		String status = teacher_solutionstatus.getText();
 
         teacher_solutionid.setText("");
+        teacher_solutionstatus.setText("");
 
 
 		try {
-			api.teacher_modifySolution(solutionid);
+			api.teacher_modifySolution(solutionid, status);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}

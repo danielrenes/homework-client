@@ -31,6 +31,9 @@ public class AdministratorController {
 
     private final Api api = Api.getInstance();
 
+    public AdministratorController() throws ClientException {
+    }
+
     @FXML
     private void teacherList() throws IOException {
         List<Teacher> teacherList = new ArrayList<Teacher>();

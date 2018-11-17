@@ -139,16 +139,10 @@
                                     <TextField fx:id="teacher_solutionid" prefHeight="25.0" prefWidth="195.0" />
                                  </children>
                               </HBox>
-                              <HBox prefHeight="23.0" prefWidth="217.0">
-                                 <children>
-                                    <Label text="Notes:" />
-                                    <TextField fx:id="teacher_solutionnotes" prefHeight="25.0" prefWidth="157.0" />
-                                 </children>
-                              </HBox>
                               <HBox prefHeight="27.0" prefWidth="217.0">
                                  <children>
+                                    <Button mnemonicParsing="false" onAction="#solutionGet" text="Get" />
                                     <Button mnemonicParsing="false" onAction="#solutionList" text="List" />
-                                    <Button mnemonicParsing="false" onAction="#solutionsList" text="Lists" />
                                     <Button mnemonicParsing="false" onAction="#solutionModify" text="Modify" />
                                  </children>
                               </HBox>

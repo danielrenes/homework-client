@@ -83,7 +83,7 @@ public class Homework {
         homework.courseName = jsonObject.getString("course");
         homework.description = jsonObject.getString("description");
         homework.headcount = jsonObject.getInt("headcount");
-        homework.selfAssignable = jsonObject.getBoolean("selfAssignable");
+        homework.selfAssignable = jsonObject.getBoolean("self_assignable");
         try {
             homework.deadline = DATE_FORMAT.parse(jsonObject.getString("deadline"));
         } catch (ParseException e) {

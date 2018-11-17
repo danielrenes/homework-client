@@ -30,6 +30,37 @@ public class StudentController {
 
 	private final Api api = Api.getInstance();
 
+	public StudentController() throws ClientException {
+	}
+
+	@FXML
+	private void courseListAll() {
+		List<Course> courseList = new ArrayList<>();
+		try {
+		    courseList = api.student_getCourses();
+        } catch (ClientException e) {
+		    e.printStackTrace();
+        }
+
+        studenttable.setEditable(true);
+
+        TableColumn<Course, String> idColumn = new TableColumn<Course, String>("ID");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        TableColumn<Course, String> nameColumn = new TableColumn<Course, String>("Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        TableColumn<Course, String> teachernameColumn = new TableColumn<Course, String>("Teacher Name");
+        teachernameColumn.setCellValueFactory(new PropertyValueFactory<>("teacherName"));
+
+        TableColumn<Course, String> descColumn = new TableColumn<Course, String>("Description");
+        descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+        studenttable.getItems().clear();
+        studenttable.getColumns().clear();
+
+        studenttable.getColumns().addAll(idColumn, nameColumn, teachernameColumn, descColumn);
+        studenttable.getItems().addAll(courseList);
+	}
+
 	@FXML
 	private void courseList() throws IOException{
 		List<Course> courseList = new ArrayList<Course>();
@@ -238,8 +269,19 @@ public class StudentController {
 
 	@FXML
 	private void homeworkUpload() throws IOException{
+        if(student_homeworkid.getText().isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Please fill in all required fields!");
+            alert.setContentText("ID");
+            alert.showAndWait();
+            return;
+        }
+
+        int homeworkid = Integer.parseInt(student_homeworkid.getText());
+
         try {
-            api.student_uploadHomework(file, file.getName());
+            api.student_uploadHomework(homeworkid, file, file.getName());
         } catch (ClientException e) {
             e.printStackTrace();
         }
@@ -249,9 +291,11 @@ public class StudentController {
 	private void homeworkChooseFile() throws IOException{
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Upload File");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("PDF", "*.pdf")
+        );
         Stage stage = (Stage) filechoose.getScene().getWindow();
-		fileChooser.showOpenDialog(stage);
-		file = fileChooser.showOpenDialog(stage);
+        file = fileChooser.showOpenDialog(stage);
 		if (file != null) {
 			System.out.println(file.getAbsolutePath() + file.getName());
 		}
@@ -274,7 +318,7 @@ public class StudentController {
 
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
-			solutionList = api.student_getSolution(solutionid);
+			solutionList.add(api.student_getSolution(solutionid));
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}

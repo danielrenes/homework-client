@@ -29,10 +29,10 @@ public class Api {
         this.serverPort = serverPort;
     }
 
-    public static Api getInstance() {
+    public static Api getInstance() throws ClientException {
         if (instance == null) {
-            // TODO: read server ip and port from config file
-            instance = new Api("localhost", 5000);
+            Configuration configuration = Configuration.getInstance();
+            instance = new Api(configuration.getServerIp(), configuration.getServerPort());
         }
         return instance;
     }
@@ -603,15 +603,42 @@ public class Api {
 
 
     //teacher-get_solution(id)
-    public List<Solution> teacher_getSolution(Integer id) throws ClientException {
+    public Solution teacher_getSolution(Integer id) throws ClientException {
         checkToken();
 
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
+        Request request = new Request.Builder()
+                .url(String.format("http://%s:%d/api/v1/teacher/solution/" + String.valueOf(id), serverIp, serverPort))
+                .header("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+
+        Response response;
+
+        try {
+            response = okHttpClient.newCall(request).execute();
+        } catch (IOException e) {
+            throw new ClientException("Could not execute request");
         }
 
+        if (response.code() != 200 || response.body() == null) {
+            throw new ClientException("Request failed");
+        }
+
+        try {
+            JSONObject jsonObject = new JSONObject(response.body().string());
+            return Solution.fromJson(jsonObject.getJSONObject("solution"));
+        } catch (IOException e) {
+            throw new ClientException("Could not process response body");
+        }
+    }
+
+    //teacher-get_solutions(id)
+    public List<Solution> teacher_getSolutions(Integer id) throws ClientException {
+        checkToken();
+
         List<Solution> solutions = new ArrayList<>();
-        String nextUrl = teacher_getSolutionsNext(String.format("http://%s:%d/api/v1/teacher/solution/" + String.valueOf(id),
+        String nextUrl = teacher_getSolutionsNext(String.format("http://%s:%d/api/v1/teacher/homework/" + String.valueOf(id) + "/solutions",
                 serverIp, serverPort), solutions);
 
         while (nextUrl != null) {
@@ -621,7 +648,7 @@ public class Api {
         return solutions;
     }
 
-    //teacher-get_solution
+    //teacher-get_solutions
     private String teacher_getSolutionsNext(String url, List<Solution> solutions) throws ClientException {
         Request request = new Request.Builder()
                 .url(url)
@@ -658,65 +685,12 @@ public class Api {
     }
 
 
-
-
-    //teacher-get_solutions(id)
-    public List<Solution> teacher_getSolutions(Integer id) throws ClientException {
-        checkToken();
-
-        List<Solution> solutions = new ArrayList<>();
-        String nextUrl = teacher_getSolutionsNexts(String.format("http://%s:%d/api/v1/teacher/homework/" + String.valueOf(id) + "/solutions",
-                serverIp, serverPort), solutions);
-
-        while (nextUrl != null) {
-            nextUrl = teacher_getSolutionsNexts(nextUrl, solutions);
-        }
-
-        return solutions;
-    }
-
-    //teacher-get_solutions
-    private String teacher_getSolutionsNexts(String url, List<Solution> solutions) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("solutions");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                solutions.add(Solution.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
-
     //teacher-modify_solution(id)
-    public void teacher_modifySolution(Integer id) throws ClientException {
+    public void teacher_modifySolution(Integer id, String status) throws ClientException {
         checkToken();
 
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", status);
 
         RequestBody formBody = RequestBody.create(JSON, jsonObject.toString());
 
@@ -802,7 +776,54 @@ public class Api {
     /*--------------------------------------------Begin of Student methods--------------------------------------------*/
 
 
+    public List<Course> student_getCourses() throws ClientException {
+        checkToken();
 
+        List<Course> courses = new ArrayList<>();
+        String nextUrl = student_getCoursesNext(String.format("http://%s:%d/api/v1/student/courses/all",
+                serverIp, serverPort), courses);
+
+        while (nextUrl != null) {
+            nextUrl = student_getCoursesNext(nextUrl, courses);
+        }
+
+        return courses;
+    }
+
+    private String student_getCoursesNext(String url, List<Course> courses) throws ClientException {
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer " + token)
+                .get()
+                .build();
+
+        Response response;
+
+        try {
+            response = okHttpClient.newCall(request).execute();
+        } catch (IOException e) {
+            throw new ClientException("Could not execute request");
+        }
+
+        if (response.code() != 200 || response.body() == null) {
+            throw new ClientException("Request failed");
+        }
+
+        try {
+            JSONObject jsonObject = new JSONObject(response.body().string());
+            JSONArray jsonArray = jsonObject.getJSONArray("courses");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                courses.add(Course.fromJson(jsonArray.getJSONObject(i)));
+            }
+            if (!jsonObject.isNull("next")) {
+                return jsonObject.getString("next");
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            throw new ClientException("Could not process response body");
+        }
+    }
 
     //student-get_applied_courses()
     public List<Course> student_getAppliedCourses() throws ClientException {
@@ -913,7 +934,7 @@ public class Api {
 
 
     //student-upload-homework
-    public void student_uploadHomework(File f, String fileName) throws ClientException {
+    public void student_uploadHomework(int id, File f, String fileName) throws ClientException {
         checkToken();
 
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
@@ -921,7 +942,8 @@ public class Api {
                 .build();
 
         Request request = new Request.Builder()
-                .url("https://localhost:8080/v1/upload")
+                .url(String.format("http://%s:%d/api/v1/student/homework/%d/submit", serverIp, serverPort, id))
+                .header("Authorization", "Bearer " + token)
                 .post(requestBody)
                 .build();
 
@@ -1114,18 +1136,18 @@ public class Api {
         checkToken();
 
         List<Solution> solutions = new ArrayList<>();
-        String nextUrl = student_getSolutionsNexts(String.format("http://%s:%d/api/v1/student/homework/" + String.valueOf(id) + "/solutions",
+        String nextUrl = student_getSolutionsNext(String.format("http://%s:%d/api/v1/student/homework/" + String.valueOf(id) + "/solutions",
                 serverIp, serverPort), solutions);
 
         while (nextUrl != null) {
-            nextUrl = student_getSolutionsNexts(nextUrl, solutions);
+            nextUrl = student_getSolutionsNext(nextUrl, solutions);
         }
 
         return solutions;
     }
 
     //student-get_solutions
-    private String student_getSolutionsNexts(String url, List<Solution> solutions) throws ClientException {
+    private String student_getSolutionsNext(String url, List<Solution> solutions) throws ClientException {
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", "Bearer " + token)
@@ -1162,27 +1184,15 @@ public class Api {
 
 
     //student-get_solution(id)
-    public List<Solution> student_getSolution(Integer id) throws ClientException {
+    public Solution student_getSolution(Integer id) throws ClientException {
         checkToken();
 
-        List<Solution> solutions = new ArrayList<>();
-        String nextUrl = student_getSolutionsNext(String.format("http://%s:%d/api/v1/student/solution/" + String.valueOf(id),
-                serverIp, serverPort), solutions);
-
-        while (nextUrl != null) {
-            nextUrl = student_getSolutionsNext(nextUrl, solutions);
-        }
-
-        return solutions;
-    }
-
-    //student-get_solution
-    private String student_getSolutionsNext(String url, List<Solution> solutions) throws ClientException {
         Request request = new Request.Builder()
-                .url(url)
+                .url(String.format("http://%s:%d/api/v1/student/solution/" + String.valueOf(id), serverIp, serverPort))
                 .header("Authorization", "Bearer " + token)
                 .get()
                 .build();
+
 
         Response response;
 
@@ -1198,15 +1208,7 @@ public class Api {
 
         try {
             JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("solutions");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                solutions.add(Solution.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
+            return Solution.fromJson(jsonObject.getJSONObject("solution"));
         } catch (IOException e) {
             throw new ClientException("Could not process response body");
         }

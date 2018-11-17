@@ -1,7 +1,5 @@
 package application;
 
-import java.io.IOException;
-
 import client.Api;
 import client.ClientException;
 import javafx.fxml.FXML;
@@ -10,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class SignInController {
 	@FXML
@@ -60,8 +60,18 @@ public class SignInController {
 		if (selectedRadioButton != null) {
 			toogleGroupValue = selectedRadioButton.getText();
 
+			Api api;
+
 			try {
-				Api.getInstance().getToken(usernametextfield.getText(), passwordfield.getText());
+				api = Api.getInstance();
+			} catch (ClientException e) {
+				e.printStackTrace();
+				errortextlabel.setText(errortextlabel.getText() + " \nCould not load configuration file");
+				return -1;
+			}
+
+			try {
+				api.getToken(usernametextfield.getText(), passwordfield.getText());
 			} catch (ClientException e) {
 				e.printStackTrace();
 				errortextlabel.setText(errortextlabel.getText() + "\nIncorrect username or password!");
