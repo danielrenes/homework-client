@@ -2,6 +2,7 @@ package application;
 
 import client.Api;
 import client.ClientException;
+import client.commands.StudentCommands;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -12,7 +13,6 @@ import model.Homework;
 import model.Solution;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +26,8 @@ public class StudentController {
 	@FXML TextField student_solutionid;
 	@FXML Button filechoose;
 	@FXML TableView studenttable;
-    File file;
+
+    private File file;
 
 	private final Api api = Api.getInstance();
 
@@ -34,10 +35,11 @@ public class StudentController {
 	}
 
 	@FXML
+    @SuppressWarnings("unchecked")
 	private void courseListAll() {
 		List<Course> courseList = new ArrayList<>();
 		try {
-		    courseList = api.student_getCourses();
+		    courseList = api.getCommands(StudentCommands.class).getCourses();
         } catch (ClientException e) {
 		    e.printStackTrace();
         }
@@ -58,14 +60,16 @@ public class StudentController {
         studenttable.getColumns().clear();
 
         studenttable.getColumns().addAll(idColumn, nameColumn, teachernameColumn, descColumn);
+
         studenttable.getItems().addAll(courseList);
 	}
 
 	@FXML
-	private void courseList() throws IOException{
-		List<Course> courseList = new ArrayList<Course>();
+    @SuppressWarnings("unchecked")
+	private void courseList() {
+		List<Course> courseList = new ArrayList<>();
 		try {
-			courseList = api.student_getAppliedCourses();
+		    courseList = api.getCommands(StudentCommands.class).getAppliedCourses();
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -86,12 +90,13 @@ public class StudentController {
 		studenttable.getColumns().clear();
 
 		studenttable.getColumns().addAll(idColumn, nameColumn, teachernameColumn, descColumn);
+
 		studenttable.getItems().addAll(courseList);
 	}
 
 	@FXML
-	private void courseApply() throws IOException{
-		if(student_courseid.getText().isEmpty()){
+	private void courseApply() {
+		if (student_courseid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -99,20 +104,21 @@ public class StudentController {
 			alert.showAndWait();
 			return;
 		}
-		Integer courseid = Integer.parseInt(student_courseid.getText());
+
+		int courseid = Integer.parseInt(student_courseid.getText());
 
         student_courseid.setText("");
 
 		try {
-			api.student_applyCourse(courseid);
+            api.getCommands(StudentCommands.class).applyCourse(courseid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@FXML
-	private void courseDelete() throws IOException{
-		if(student_courseid.getText().isEmpty()){
+	private void courseDelete() {
+		if (student_courseid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -120,22 +126,22 @@ public class StudentController {
 			alert.showAndWait();
 			return;
 		}
-		Integer courseid = Integer.parseInt(student_courseid.getText());
+
+		int courseid = Integer.parseInt(student_courseid.getText());
 
         student_courseid.setText("");
 
 		try {
-			api.student_abandonCourse(courseid);
+            api.getCommands(StudentCommands.class).abandonCourse(courseid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@FXML
-	private void homeworkListForCourse() throws IOException{
-		List<Homework> homeworkList = new ArrayList<Homework>();
-		if(student_homeworkid.getText().isEmpty()){
+    @SuppressWarnings("unchecked")
+	private void homeworkListForCourse() {
+		if (student_homeworkid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -143,12 +149,62 @@ public class StudentController {
 			alert.showAndWait();
 			return;
 		}
-		Integer homeworkid = Integer.parseInt(student_homeworkid.getText());
+
+		int homeworkid = Integer.parseInt(student_homeworkid.getText());
 
         student_homeworkid.setText("");
 
+        List<Homework> homeworkList = new ArrayList<>();
 		try {
-			homeworkList = api.student_getHomeworksForCourse(homeworkid);
+		    homeworkList = api.getCommands(StudentCommands.class).getHomeworksForCourse(homeworkid);
+		} catch (ClientException e) {
+			e.printStackTrace();
+		}
+
+		studenttable.setEditable(true);
+
+        TableColumn<Homework, String> idColumn = new TableColumn<Homework, String>("ID");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+		TableColumn<Homework, String> nameColumn = new TableColumn<Homework, String>("Name");
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+		TableColumn<Homework, Date> deadlineColumn = new TableColumn<Homework, Date>("Deadline");
+		deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
+
+		TableColumn<Homework, String> descriptionColumn = new TableColumn<Homework, String>("Description");
+		descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+		TableColumn<Homework, Integer> headcountColumn = new TableColumn<Homework, Integer>("Headcount");
+		headcountColumn.setCellValueFactory(new PropertyValueFactory<>("headcount"));
+
+		TableColumn<Homework, Boolean> selfAssignableColumn = new TableColumn<Homework, Boolean>("selfAssignable");
+		selfAssignableColumn.setCellValueFactory(new PropertyValueFactory<>("selfAssignable"));
+
+		TableColumn<Homework, String> courseNameColumn = new TableColumn<Homework, String>("Course name");
+		courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+
+		studenttable.getItems().clear();
+		studenttable.getColumns().clear();
+
+		studenttable.getColumns().addAll(idColumn,
+                                         nameColumn,
+                                         deadlineColumn,
+                                         descriptionColumn,
+                                         headcountColumn,
+                                         selfAssignableColumn,
+                                         courseNameColumn);
+
+		studenttable.getItems().addAll(homeworkList);
+	}
+
+	@FXML
+    @SuppressWarnings("unchecked")
+	private void homeworkListForStudent() {
+		List<Homework> homeworkList = new ArrayList<>();
+
+		try {
+		    homeworkList = api.getCommands(StudentCommands.class).getHomeworks();
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -180,54 +236,20 @@ public class StudentController {
 		studenttable.getItems().clear();
 		studenttable.getColumns().clear();
 
-		studenttable.getColumns().addAll(idColumn, nameColumn, deadlineColumn, descriptionColumn, headcountColumn, selfAssignableColumn, courseNameColumn);
+		studenttable.getColumns().addAll(idColumn,
+                                         nameColumn,
+                                         deadlineColumn,
+                                         descriptionColumn,
+                                         headcountColumn,
+                                         selfAssignableColumn,
+                                         courseNameColumn);
+
 		studenttable.getItems().addAll(homeworkList);
 	}
 
 	@FXML
-	private void homeworkListForStudent() throws IOException{
-		List<Homework> homeworkList = new ArrayList<Homework>();
-
-		try {
-			homeworkList = api.student_getHomeworks();
-		} catch (ClientException e) {
-			e.printStackTrace();
-		}
-
-
-		studenttable.setEditable(true);
-
-        TableColumn<Homework, String> idColumn = new TableColumn<Homework, String>("ID");
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-		TableColumn<Homework, String> nameColumn = new TableColumn<Homework, String>("Name");
-		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-		TableColumn<Homework, Date> deadlineColumn = new TableColumn<Homework, Date>("Deadline");
-		deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
-
-		TableColumn<Homework, String> descriptionColumn = new TableColumn<Homework, String>("Description");
-		descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-
-		TableColumn<Homework, Integer> headcountColumn = new TableColumn<Homework, Integer>("Headcount");
-		headcountColumn.setCellValueFactory(new PropertyValueFactory<>("headcount"));
-
-		TableColumn<Homework, Boolean> selfAssignableColumn = new TableColumn<Homework, Boolean>("selfAssignable");
-		selfAssignableColumn.setCellValueFactory(new PropertyValueFactory<>("selfAssignable"));
-
-		TableColumn<Homework, String> courseNameColumn = new TableColumn<Homework, String>("Course name");
-		courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("courseName"));
-
-		studenttable.getItems().clear();
-		studenttable.getColumns().clear();
-
-		studenttable.getColumns().addAll(idColumn, nameColumn, deadlineColumn, descriptionColumn, headcountColumn, selfAssignableColumn, courseNameColumn);
-		studenttable.getItems().addAll(homeworkList);
-	}
-
-	@FXML
-	private void homeworkApply() throws IOException{
-		if(student_homeworkid.getText().isEmpty()){
+	private void homeworkApply() {
+		if (student_homeworkid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -235,20 +257,21 @@ public class StudentController {
 			alert.showAndWait();
 			return;
 		}
-		Integer homeworkid = Integer.parseInt(student_homeworkid.getText());
+
+		int homeworkid = Integer.parseInt(student_homeworkid.getText());
 
         student_homeworkid.setText("");
 
 		try {
-			api.student_applyHomework(homeworkid);
+            api.getCommands(StudentCommands.class).applyHomework(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@FXML
-	private void homeworkDelete() throws IOException{
-		if(student_homeworkid.getText().isEmpty()){
+	private void homeworkDelete() {
+		if (student_homeworkid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -256,20 +279,21 @@ public class StudentController {
 			alert.showAndWait();
 			return;
 		}
-		Integer homeworkid = Integer.parseInt(student_homeworkid.getText());
+
+		int homeworkid = Integer.parseInt(student_homeworkid.getText());
 
         student_homeworkid.setText("");
 
 		try {
-			api.student_abandonHomework(homeworkid);
+            api.getCommands(StudentCommands.class).abandonHomework(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@FXML
-	private void homeworkUpload() throws IOException{
-        if(student_homeworkid.getText().isEmpty()){
+	private void homeworkUpload() {
+        if (student_homeworkid.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Warning");
             alert.setHeaderText("Please fill in all required fields!");
@@ -281,14 +305,15 @@ public class StudentController {
         int homeworkid = Integer.parseInt(student_homeworkid.getText());
 
         try {
-            api.student_uploadHomework(homeworkid, file, file.getName());
+            api.getCommands(StudentCommands.class).uploadHomework(
+                    homeworkid, file, file.getName());
         } catch (ClientException e) {
             e.printStackTrace();
         }
 	}
 
 	@FXML
-	private void homeworkChooseFile() throws IOException{
+	private void homeworkChooseFile() {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Upload File");
         fileChooser.getExtensionFilters().add(
@@ -299,12 +324,12 @@ public class StudentController {
 		if (file != null) {
 			System.out.println(file.getAbsolutePath() + file.getName());
 		}
-
 	}
 
 	@FXML
-	private void solutionGet() throws IOException{
-		if(student_solutionid.getText().isEmpty()){
+    @SuppressWarnings("unchecked")
+	private void solutionGet() {
+		if (student_solutionid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -312,13 +337,14 @@ public class StudentController {
 			alert.showAndWait();
 			return;
 		}
-		Integer solutionid = Integer.parseInt(student_solutionid.getText());
+
+		int solutionid = Integer.parseInt(student_solutionid.getText());
 
         student_solutionid.setText("");
 
 		List<Solution> solutionList = new ArrayList<Solution>();
 		try {
-			solutionList.add(api.student_getSolution(solutionid));
+		    solutionList.add(api.getCommands(StudentCommands.class).getSolution(solutionid));
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -336,12 +362,14 @@ public class StudentController {
 		studenttable.getColumns().clear();
 
 		studenttable.getColumns().addAll(submittedColumn, statusColumn);
+
 		studenttable.getItems().addAll(solutionList);
 	}
 
 	@FXML
-	private void solutionList() throws IOException{
-		if(student_solutionid.getText().isEmpty()){
+    @SuppressWarnings("unchecked")
+	private void solutionList() {
+		if (student_solutionid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -349,13 +377,14 @@ public class StudentController {
 			alert.showAndWait();
 			return;
 		}
-		Integer solutionid = Integer.parseInt(student_solutionid.getText());
+
+		int solutionid = Integer.parseInt(student_solutionid.getText());
 
         student_solutionid.setText("");
 
-		List<Solution> solutionList = new ArrayList<Solution>();
+		List<Solution> solutionList = new ArrayList<>();
 		try {
-			solutionList = api.student_getSolutions(solutionid);
+		    solutionList = api.getCommands(StudentCommands.class).getSolutions(solutionid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
@@ -373,6 +402,7 @@ public class StudentController {
 		studenttable.getColumns().clear();
 
 		studenttable.getColumns().addAll(submittedColumn, statusColumn);
+
 		studenttable.getItems().addAll(solutionList);
 	}
 }

@@ -2,6 +2,7 @@ package application;
 
 import client.Api;
 import client.ClientException;
+import client.commands.TeacherCommands;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -10,7 +11,6 @@ import model.Homework;
 import model.Solution;
 import model.Student;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +27,6 @@ public class TeacherController {
 	@FXML TextField teacher_homeworkdeadline;
 	@FXML TextField teacher_homeworkheadcount;
 	@FXML TextField teacher_solutionstatus;
-	@FXML TextField teacher_solutionnotes;
 	@FXML TableView teachertable;
 	@FXML TextField teacher_studentid;
 	@FXML TextField teacher_solutionid;
@@ -39,14 +38,14 @@ public class TeacherController {
 	}
 
 	@FXML
-	private void courseList() throws IOException{
-		List<Course> courseList = new ArrayList<Course>();
+    @SuppressWarnings("unchecked")
+	private void courseList() {
+		List<Course> courseList = new ArrayList<>();
 		try {
-			courseList = api.teacher_getCourses();
+		    courseList = api.getCommands(TeacherCommands.class).getCourses();
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 
 		teachertable.setEditable(true);
 
@@ -64,12 +63,13 @@ public class TeacherController {
 		teachertable.getColumns().clear();
 
 		teachertable.getColumns().addAll(idColumn, nameColumn, teachernameColumn, descColumn);
+
 		teachertable.getItems().addAll(courseList);
 	}
 
 	@FXML
-	private void courseCreate() throws IOException{
-		if(teacher_coursename.getText().isEmpty() || teacher_coursedesc.getText().isEmpty()){
+	private void courseCreate() {
+		if (teacher_coursename.getText().isEmpty() || teacher_coursedesc.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -77,6 +77,7 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
+
 		String course = teacher_coursename.getText();
 		String description = teacher_coursedesc.getText();
 
@@ -84,16 +85,15 @@ public class TeacherController {
         teacher_coursedesc.setText("");
 
 		try {
-			api.teacher_createCourse(course, description);
+            api.getCommands(TeacherCommands.class).createCourse(course, description);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@FXML
-	private void courseDelete() throws IOException{
-		if(teacher_courseid.getText().isEmpty()){
+	private void courseDelete() {
+		if(teacher_courseid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -101,43 +101,22 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
-		Integer courseid = Integer.parseInt(teacher_courseid.getText());
+
+		int courseid = Integer.parseInt(teacher_courseid.getText());
+
         teacher_courseid.setText("");
 
 		try {
-			api.teacher_removeCourse(courseid);
+            api.getCommands(TeacherCommands.class).removeCourse(courseid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@FXML
-	private void groupList() throws IOException{
-
-	}
-
-	@FXML
-	private void groupCreate() throws IOException{
-		String group = teacher_groupstudents.getText();
-	}
-
-	@FXML
-	private void groupDelete() throws IOException{
-		String group = teacher_groupstudents.getText();
-	}
-
-	@FXML
-	private void groupModify() throws IOException{
-		String group = teacher_groupstudents.getText();
-	}
-
-
-
-	@FXML
-	private void homeworkList() throws IOException{
-		List<Homework> homeworkList = new ArrayList<Homework>();
-		if(teacher_homeworkid.getText().isEmpty()){
+    @SuppressWarnings("unchecked")
+	private void homeworkList() {
+		if (teacher_homeworkid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -145,16 +124,17 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
-		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+		int homeworkid = Integer.parseInt(teacher_homeworkid.getText());
 
         teacher_homeworkid.setText("");
 
+        List<Homework> homeworkList = new ArrayList<>();
 		try {
-			homeworkList = api.teacher_getHomeworks(homeworkid);
+		    homeworkList = api.getCommands(TeacherCommands.class).getHomeworks(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 
 		teachertable.setEditable(true);
 
@@ -182,19 +162,26 @@ public class TeacherController {
 		teachertable.getItems().clear();
 		teachertable.getColumns().clear();
 
-		teachertable.getColumns().addAll(idColumn, nameColumn, deadlineColumn, descriptionColumn, headcountColumn, selfAssignableColumn, courseNameColumn);
+		teachertable.getColumns().addAll(idColumn,
+                                         nameColumn,
+                                         deadlineColumn,
+                                         descriptionColumn,
+                                         headcountColumn,
+                                         selfAssignableColumn,
+                                         courseNameColumn);
+
         teachertable.getItems().addAll(homeworkList);
 	}
 
 	@FXML
-	private void homeworkCreate() throws IOException{
-		if(teacher_homeworkid.getText().isEmpty() ||
+	private void homeworkCreate() {
+		if (teacher_homeworkid.getText().isEmpty() ||
 				teacher_homeworkname.getText().isEmpty() ||
 				teacher_homeworkdescription.getText().isEmpty() ||
 				teacher_homeworkdeadline.getText().isEmpty() ||
 				teacher_homeworkheadcount.getText().isEmpty() ||
 				teacher_homeworkselfassignable.getText().isEmpty()
-		){
+		) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -202,7 +189,8 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
-		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+		int homeworkid = Integer.parseInt(teacher_homeworkid.getText());
 		String name = teacher_homeworkname.getText();
 		String description = teacher_homeworkdescription.getText();
 		String deadline = String.valueOf(teacher_homeworkdeadline.getText());
@@ -216,16 +204,16 @@ public class TeacherController {
         teacher_homeworkheadcount.setText("");
 
 		try {
-			api.teacher_createHomework(name, description, deadline, headcount, selfAssignable, homeworkid);
+            api.getCommands(TeacherCommands.class).createHomework(
+                    name, description, deadline, headcount, selfAssignable, homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@FXML
-	private void homeworkDelete() throws IOException{
-		if(teacher_homeworkid.getText().isEmpty()){
+	private void homeworkDelete() {
+		if (teacher_homeworkid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -233,27 +221,27 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
-		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+		int homeworkid = Integer.parseInt(teacher_homeworkid.getText());
 
 		teacher_homeworkid.setText("");
 
 		try {
-			api.teacher_removeHomework(homeworkid);
+            api.getCommands(TeacherCommands.class).removeHomework(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@FXML
-	private void homeworkModify() throws IOException{
-		if(teacher_homeworkid.getText().isEmpty() ||
+	private void homeworkModify() {
+		if (teacher_homeworkid.getText().isEmpty() ||
 				teacher_homeworkname.getText().isEmpty() ||
 				teacher_homeworkdescription.getText().isEmpty() ||
 				teacher_homeworkdeadline.getText().isEmpty() ||
 				teacher_homeworkheadcount.getText().isEmpty() ||
 				teacher_homeworkselfassignable.getText().isEmpty()
-		){
+		) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -261,7 +249,8 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
-		Integer homeworkid = Integer.parseInt(teacher_homeworkid.getText());
+
+		int homeworkid = Integer.parseInt(teacher_homeworkid.getText());
 		String name = teacher_homeworkname.getText();
 		String description = teacher_homeworkdescription.getText();
 		String deadline = String.valueOf(teacher_homeworkdeadline.getText());
@@ -275,16 +264,17 @@ public class TeacherController {
         teacher_homeworkheadcount.setText("");
 
 		try {
-			api.teacher_modifyHomework(name, description, deadline, headcount, selfAssignable, homeworkid);
+            api.getCommands(TeacherCommands.class).modifyHomework(
+                    name, description, deadline, headcount, selfAssignable, homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@FXML
-	private void studentList() throws IOException{
-		if(teacher_studentid.getText().isEmpty()){
+    @SuppressWarnings("unchecked")
+	private void studentList() {
+		if (teacher_studentid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -292,17 +282,17 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
-		Integer studentid = Integer.parseInt(teacher_studentid.getText());
+
+		int studentid = Integer.parseInt(teacher_studentid.getText());
 
         teacher_studentid.setText("");
 
-		List<Student> studentList = new ArrayList<Student>();
+		List<Student> studentList = new ArrayList<>();
 		try {
-			studentList = api.teacher_getStudents(studentid);
+		    studentList = api.getCommands(TeacherCommands.class).getStudents(studentid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 
 		teachertable.setEditable(true);
 
@@ -317,12 +307,14 @@ public class TeacherController {
 		teachertable.getColumns().clear();
 
 		teachertable.getColumns().addAll(idColumn, nameColumn, usernameColumn);
+
 		teachertable.getItems().addAll(studentList);
 	}
 
 	@FXML
-	private void solutionGet() throws IOException{
-		if(teacher_solutionid.getText().isEmpty()){
+    @SuppressWarnings("unchecked")
+	private void solutionGet() {
+		if (teacher_solutionid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -330,17 +322,17 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
-		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+
+		int solutionid = Integer.parseInt(teacher_solutionid.getText());
 
         teacher_solutionid.setText("");
 
-		List<Solution> solutionList = new ArrayList<Solution>();
+		List<Solution> solutionList = new ArrayList<>();
 		try {
-			solutionList.add(api.teacher_getSolution(solutionid));
+		    solutionList.add(api.getCommands(TeacherCommands.class).getSolution(solutionid));
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 
 		teachertable.setEditable(true);
 
@@ -355,12 +347,14 @@ public class TeacherController {
 		teachertable.getColumns().clear();
 
 		teachertable.getColumns().addAll(idColumn, submittedColumn, statusColumn);
+
 		teachertable.getItems().addAll(solutionList);
 	}
 
 	@FXML
-	private void solutionList() throws IOException{
-		if(teacher_solutionid.getText().isEmpty()){
+    @SuppressWarnings("unchecked")
+	private void solutionList() {
+		if (teacher_solutionid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -368,17 +362,17 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
-		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+
+		int solutionid = Integer.parseInt(teacher_solutionid.getText());
 
         teacher_solutionid.setText("");
 
-		List<Solution> solutionList = new ArrayList<Solution>();
+		List<Solution> solutionList = new ArrayList<>();
 		try {
-			solutionList = api.teacher_getSolutions(solutionid);
+		    solutionList = api.getCommands(TeacherCommands.class).getSolutions(solutionid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}
-
 
 		teachertable.setEditable(true);
 
@@ -393,12 +387,13 @@ public class TeacherController {
 		teachertable.getColumns().clear();
 
 		teachertable.getColumns().addAll(idColumn, submittedColumn, statusColumn);
+
 		teachertable.getItems().addAll(solutionList);
 	}
 
 	@FXML
-	private void solutionModify() throws IOException{
-		if(teacher_solutionid.getText().isEmpty()){
+	private void solutionModify() {
+		if (teacher_solutionid.getText().isEmpty()) {
 			Alert alert = new Alert(Alert.AlertType.WARNING);
 			alert.setTitle("Warning");
 			alert.setHeaderText("Please fill in all required fields!");
@@ -406,15 +401,15 @@ public class TeacherController {
 			alert.showAndWait();
 			return;
 		}
-		Integer solutionid = Integer.parseInt(teacher_solutionid.getText());
+
+		int solutionid = Integer.parseInt(teacher_solutionid.getText());
 		String status = teacher_solutionstatus.getText();
 
         teacher_solutionid.setText("");
         teacher_solutionstatus.setText("");
 
-
 		try {
-			api.teacher_modifySolution(solutionid, status);
+            api.getCommands(TeacherCommands.class).modifySolution(solutionid, status);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}

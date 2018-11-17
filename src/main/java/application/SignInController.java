@@ -30,14 +30,8 @@ public class SignInController {
 	private RadioButton teacherradiobutton = new RadioButton();	
 	@FXML
 	private RadioButton studentradiobutton = new RadioButton();
-	
-	private String toogleGroupValue="";
 
 	public SignInController(){
-	}
-
-	@FXML
-	private void initialize(){
 	}
 
 	@FXML
@@ -58,7 +52,7 @@ public class SignInController {
 
 		RadioButton selectedRadioButton = (RadioButton) signin.getSelectedToggle();
 		if (selectedRadioButton != null) {
-			toogleGroupValue = selectedRadioButton.getText();
+			String toogleGroupValue = selectedRadioButton.getText();
 
 			Api api;
 
