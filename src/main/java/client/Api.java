@@ -2,12 +2,10 @@ package client;
 
 import model.*;
 import okhttp3.*;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Api {
@@ -104,54 +102,18 @@ public class Api {
 
 
     //admin-get_teachers()
+    @SuppressWarnings("unchecked")
     public List<Teacher> admin_getTeachers() throws ClientException {
         checkToken();
 
-        List<Teacher> teachers = new ArrayList<>();
-        String nextUrl = admin_getTeachersNext(String.format("http://%s:%d/api/v1/admin/teachers",
-                serverIp, serverPort), teachers);
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Teacher.Creator(),
+                String.format("http://%s:%d/api/v1/admin/teachers", serverIp, serverPort),
+                "teachers",
+                token
+        );
 
-        while (nextUrl != null) {
-            nextUrl = admin_getTeachersNext(nextUrl, teachers);
-        }
-
-        return teachers;
-    }
-
-    //admin-get_teachers
-    private String admin_getTeachersNext(String url, List<Teacher> teachers) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("teachers");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                teachers.add(Teacher.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
+        return query.execute();
     }
 
     //admin-create_teacher()
@@ -212,62 +174,19 @@ public class Api {
     }
 
     //admin-get_students()
+    @SuppressWarnings("unchecked")
     public List<Student> admin_getStudents() throws ClientException {
         checkToken();
 
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Student.Creator(),
+                String.format("http://%s:%d/api/v1/admin/students", serverIp, serverPort),
+                "students",
+                token
+        );
 
-        List<Student> students = new ArrayList<>();
-        String nextUrl = admin_getStudentsNext(String.format("http://%s:%d/api/v1/admin/students",
-                serverIp, serverPort), students);
-
-        while (nextUrl != null) {
-            nextUrl = admin_getStudentsNext(nextUrl, students);
-        }
-
-        return students;
+        return query.execute();
     }
-
-
-    //admin-get_students
-    private String admin_getStudentsNext(String url, List<Student> students) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("students");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                students.add(Student.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
-
 
     //admin-remove_student(id)
     public void admin_removeStudent(Integer id) throws ClientException {
@@ -335,61 +254,19 @@ public class Api {
 
 
     //teacher-get_courses()
+    @SuppressWarnings("unchecked")
     public List<Course> teacher_getCourses() throws ClientException {
         checkToken();
 
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Course.Creator(),
+                String.format("http://%s:%d/api/v1/teacher/courses", serverIp, serverPort),
+                "courses",
+                token
+        );
 
-        List<Course> courses = new ArrayList<>();
-        String nextUrl = teacher_getCoursesNext(String.format("http://%s:%d/api/v1/teacher/courses",
-                serverIp, serverPort), courses);
-
-        while (nextUrl != null) {
-            nextUrl = teacher_getCoursesNext(nextUrl, courses);
-        }
-
-        return courses;
+        return query.execute();
     }
-
-    //teacher-get_courses
-    private String teacher_getCoursesNext(String url, List<Course> courses) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("courses");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                courses.add(Course.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
-
 
     //teacher-create_course()
     public void teacher_createCourse(String name, String description) throws ClientException {
@@ -449,61 +326,19 @@ public class Api {
 
 
     //teacher-get_homeworks(id)
+    @SuppressWarnings("unchecked")
     public List<Homework> teacher_getHomeworks(Integer id) throws ClientException {
         checkToken();
 
-        if (token == null) {
-            throw new ClientException("Authentication token is needed");
-        }
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Homework.Creator(),
+                String.format("http://%s:%d/api/v1/teacher/course/%d/homeworks", serverIp, serverPort, id),
+                "homeworks",
+                token
+        );
 
-        List<Homework> homeworks = new ArrayList<>();
-        String nextUrl = teacher_getHomeworksNext(String.format("http://%s:%d/api/v1/teacher/course/" + String.valueOf(id) + "/homeworks",
-                serverIp, serverPort), homeworks);
-
-        while (nextUrl != null) {
-            nextUrl = teacher_getHomeworksNext(nextUrl, homeworks);
-        }
-
-        return homeworks;
+        return query.execute();
     }
-
-    //teacher-get_homeworks
-    private String teacher_getHomeworksNext(String url, List<Homework> homeworks) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("homeworks");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                homeworks.add(Homework.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
-
 
     //teacher-create_homework(id)
     public void teacher_createHomework(String name, String description, String deadline, String headcount, String selfAssignable, Integer id) throws ClientException {
@@ -627,63 +462,26 @@ public class Api {
 
         try {
             JSONObject jsonObject = new JSONObject(response.body().string());
-            return Solution.fromJson(jsonObject.getJSONObject("solution"));
+            return new Solution.Creator().fromJson(jsonObject.getJSONObject("solution"));
         } catch (IOException e) {
             throw new ClientException("Could not process response body");
         }
     }
 
     //teacher-get_solutions(id)
+    @SuppressWarnings("unchecked")
     public List<Solution> teacher_getSolutions(Integer id) throws ClientException {
         checkToken();
 
-        List<Solution> solutions = new ArrayList<>();
-        String nextUrl = teacher_getSolutionsNext(String.format("http://%s:%d/api/v1/teacher/homework/" + String.valueOf(id) + "/solutions",
-                serverIp, serverPort), solutions);
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Solution.Creator(),
+                String.format("http://%s:%d/api/v1/teacher/homework/%d/solutions", serverIp, serverPort, id),
+                "solutions",
+                token
+        );
 
-        while (nextUrl != null) {
-            nextUrl = teacher_getSolutionsNext(nextUrl, solutions);
-        }
-
-        return solutions;
+        return query.execute();
     }
-
-    //teacher-get_solutions
-    private String teacher_getSolutionsNext(String url, List<Solution> solutions) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("solutions");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                solutions.add(Solution.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
 
     //teacher-modify_solution(id)
     public void teacher_modifySolution(Integer id, String status) throws ClientException {
@@ -717,57 +515,19 @@ public class Api {
 
 
     //teacher-get_students(id)
+    @SuppressWarnings("unchecked")
     public List<Student> teacher_getStudents(Integer id) throws ClientException {
         checkToken();
 
-        List<Student> students = new ArrayList<>();
-        String nextUrl = teacher_getStudentsNext(String.format("http://%s:%d/api/v1/teacher/course/" + String.valueOf(id) + "/students",
-                serverIp, serverPort), students);
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Student.Creator(),
+                String.format("http://%s:%d/api/v1/teacher/course/%d/students", serverIp, serverPort, id),
+                "students",
+                token
+        );
 
-        while (nextUrl != null) {
-            nextUrl = teacher_getStudentsNext(nextUrl, students);
-        }
-
-        return students;
+        return query.execute();
     }
-
-
-    //teacher-get_students
-    private String teacher_getStudentsNext(String url, List<Student> students) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("students");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                students.add(Student.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
 
 
     /*--------------------------------------------End of Teacher methods--------------------------------------------*/
@@ -776,106 +536,34 @@ public class Api {
     /*--------------------------------------------Begin of Student methods--------------------------------------------*/
 
 
+    @SuppressWarnings("unchecked")
     public List<Course> student_getCourses() throws ClientException {
         checkToken();
 
-        List<Course> courses = new ArrayList<>();
-        String nextUrl = student_getCoursesNext(String.format("http://%s:%d/api/v1/student/courses/all",
-                serverIp, serverPort), courses);
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Course.Creator(),
+                String.format("http://%s:%d/api/v1/student/courses/all", serverIp, serverPort),
+                "courses",
+                token
+        );
 
-        while (nextUrl != null) {
-            nextUrl = student_getCoursesNext(nextUrl, courses);
-        }
-
-        return courses;
-    }
-
-    private String student_getCoursesNext(String url, List<Course> courses) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("courses");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                courses.add(Course.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
+        return query.execute();
     }
 
     //student-get_applied_courses()
+    @SuppressWarnings("unchecked")
     public List<Course> student_getAppliedCourses() throws ClientException {
         checkToken();
 
-        List<Course> courses = new ArrayList<>();
-        String nextUrl = student_getAppliedCoursesNext(String.format("http://%s:%d/api/v1/student/courses",
-                serverIp, serverPort), courses);
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Course.Creator(),
+                String.format("http://%s:%d/api/v1/student/courses", serverIp, serverPort),
+                "courses",
+                token
+        );
 
-        while (nextUrl != null) {
-            nextUrl = student_getAppliedCoursesNext(nextUrl, courses);
-        }
-
-        return courses;
+        return query.execute();
     }
-
-    //student-get_applied_courses
-    private String student_getAppliedCoursesNext(String url, List<Course> courses) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("courses");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                courses.add(Course.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
 
     //student-apply_for_course(id)
     public void student_applyCourse(Integer id) throws ClientException {
@@ -964,59 +652,19 @@ public class Api {
 
 
     //student-get_homeworks_for_course(id)
-    public List<Homework> student_getHomeworkForCourse(Integer id) throws ClientException {
+    @SuppressWarnings("unchecked")
+    public List<Homework> student_getHomeworksForCourse(Integer id) throws ClientException {
         checkToken();
 
-        List<Homework> homeworks = new ArrayList<>();
-        String nextUrl = student_getHomeworksForCourseNext(String.format("http://%s:%d/api/v1/student/course/" + String.valueOf(id) + "/homeworks",
-                serverIp, serverPort), homeworks);
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Homework.Creator(),
+                String.format("http://%s:%d/api/v1/student/course/%d/homeworks", serverIp, serverPort, id),
+                "homeworks",
+                token
+        );
 
-        while (nextUrl != null) {
-            nextUrl = student_getHomeworksForCourseNext(nextUrl, homeworks);
-        }
-
-        return homeworks;
+        return query.execute();
     }
-
-
-    //student-get_homeworks_for_course
-    private String student_getHomeworksForCourseNext(String url, List<Homework> homeworks) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("homeworks");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                homeworks.add(Homework.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
-
-
 
     //student-apply_for_homework(id)
     public void student_applyHomework(Integer id) throws ClientException {
@@ -1073,115 +721,35 @@ public class Api {
 
     }
 
-
-    ////////////////MISSING submit_solution(id)//////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
     //student-get_homeworks()
+    @SuppressWarnings("unchecked")
     public List<Homework> student_getHomeworks() throws ClientException {
         checkToken();
 
-        List<Homework> homeworks = new ArrayList<>();
-        String nextUrl = student_getHomeworksNext(String.format("http://%s:%d/api/v1/student/homeworks",
-                serverIp, serverPort), homeworks);
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Homework.Creator(),
+                String.format("http://%s:%d/api/v1/student/homeworks", serverIp, serverPort),
+                "homeworks",
+                token
+        );
 
-        while (nextUrl != null) {
-            nextUrl = student_getHomeworksNext(nextUrl, homeworks);
-        }
-
-        return homeworks;
+        return query.execute();
     }
-
-    //student-get_homeworks
-    private String student_getHomeworksNext(String url, List<Homework> homeworks) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("homeworks");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                homeworks.add(Homework.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
-
 
     //student-get_solutions(id)
+    @SuppressWarnings("unchecked")
     public List<Solution> student_getSolutions(Integer id) throws ClientException {
         checkToken();
 
-        List<Solution> solutions = new ArrayList<>();
-        String nextUrl = student_getSolutionsNext(String.format("http://%s:%d/api/v1/student/homework/" + String.valueOf(id) + "/solutions",
-                serverIp, serverPort), solutions);
+        PaginatedQuery query = new PaginatedQuery<>(
+                new Solution.Creator(),
+                String.format("http://%s:%d/api/v1/student/homework/%d/solutions", serverIp, serverPort, id),
+                "solutions",
+                token
+        );
 
-        while (nextUrl != null) {
-            nextUrl = student_getSolutionsNext(nextUrl, solutions);
-        }
-
-        return solutions;
+        return query.execute();
     }
-
-    //student-get_solutions
-    private String student_getSolutionsNext(String url, List<Solution> solutions) throws ClientException {
-        Request request = new Request.Builder()
-                .url(url)
-                .header("Authorization", "Bearer " + token)
-                .get()
-                .build();
-
-        Response response;
-
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            throw new ClientException("Could not execute request");
-        }
-
-        if (response.code() != 200 || response.body() == null) {
-            throw new ClientException("Request failed");
-        }
-
-        try {
-            JSONObject jsonObject = new JSONObject(response.body().string());
-            JSONArray jsonArray = jsonObject.getJSONArray("solutions");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                solutions.add(Solution.fromJson(jsonArray.getJSONObject(i)));
-            }
-            if (!jsonObject.isNull("next")) {
-                return jsonObject.getString("next");
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new ClientException("Could not process response body");
-        }
-    }
-
 
     //student-get_solution(id)
     public Solution student_getSolution(Integer id) throws ClientException {
@@ -1208,7 +776,7 @@ public class Api {
 
         try {
             JSONObject jsonObject = new JSONObject(response.body().string());
-            return Solution.fromJson(jsonObject.getJSONObject("solution"));
+            return new Solution.Creator().fromJson(jsonObject.getJSONObject("solution"));
         } catch (IOException e) {
             throw new ClientException("Could not process response body");
         }

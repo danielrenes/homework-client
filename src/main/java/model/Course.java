@@ -43,12 +43,18 @@ public class Course {
         this.teacherName = teacherName;
     }
 
-    public static Course fromJson(JSONObject jsonObject) {
-        Course course = new Course();
-        course.id = jsonObject.getInt("id");
-        course.name = jsonObject.getString("name");
-        course.description = jsonObject.getString("description");
-        course.teacherName = jsonObject.getString("teacher");
-        return course;
+    public static class Creator implements JsonCreator<Course> {
+        public Creator() {
+        }
+
+        @Override
+        public Course fromJson(JSONObject jsonObject) {
+            Course course = new Course();
+            course.id = jsonObject.getInt("id");
+            course.name = jsonObject.getString("name");
+            course.description = jsonObject.getString("description");
+            course.teacherName = jsonObject.getString("teacher");
+            return course;
+        }
     }
 }

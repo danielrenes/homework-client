@@ -1,12 +1,9 @@
 package model;
 
-public class User {
+public abstract class User {
     protected int id;
     protected String name;
     protected String username;
-
-    public User() {
-    }
 
     public int getId() {
         return id;

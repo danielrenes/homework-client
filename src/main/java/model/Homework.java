@@ -76,19 +76,25 @@ public class Homework {
         this.courseName = courseName;
     }
 
-    public static Homework fromJson(JSONObject jsonObject) {
-        Homework homework = new Homework();
-        homework.id = jsonObject.getInt("id");
-        homework.name = jsonObject.getString("name");
-        homework.courseName = jsonObject.getString("course");
-        homework.description = jsonObject.getString("description");
-        homework.headcount = jsonObject.getInt("headcount");
-        homework.selfAssignable = jsonObject.getBoolean("self_assignable");
-        try {
-            homework.deadline = DATE_FORMAT.parse(jsonObject.getString("deadline"));
-        } catch (ParseException e) {
-            e.printStackTrace();
+    public static class Creator implements JsonCreator<Homework> {
+        public Creator() {
         }
-        return homework;
+
+        @Override
+        public Homework fromJson(JSONObject jsonObject) {
+            Homework homework = new Homework();
+            homework.id = jsonObject.getInt("id");
+            homework.name = jsonObject.getString("name");
+            homework.courseName = jsonObject.getString("course");
+            homework.description = jsonObject.getString("description");
+            homework.headcount = jsonObject.getInt("headcount");
+            homework.selfAssignable = jsonObject.getBoolean("self_assignable");
+            try {
+                homework.deadline = DATE_FORMAT.parse(jsonObject.getString("deadline"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return homework;
+        }
     }
 }

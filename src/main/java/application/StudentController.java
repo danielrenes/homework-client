@@ -148,7 +148,7 @@ public class StudentController {
         student_homeworkid.setText("");
 
 		try {
-			homeworkList = api.student_getHomeworkForCourse(homeworkid);
+			homeworkList = api.student_getHomeworksForCourse(homeworkid);
 		} catch (ClientException e) {
 			e.printStackTrace();
 		}

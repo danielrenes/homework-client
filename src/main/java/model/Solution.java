@@ -40,15 +40,21 @@ public class Solution {
         this.status = status;
     }
 
-    public static Solution fromJson(JSONObject jsonObject) {
-        Solution solution = new Solution();
-        solution.id = jsonObject.getInt("id");
-        solution.status = jsonObject.getString("status");
-        try {
-            solution.submittedAt = DATE_FORMAT.parse(jsonObject.getString("submitted_at"));
-        } catch (ParseException e) {
-            e.printStackTrace();
+    public static class Creator implements JsonCreator<Solution> {
+        public Creator() {
         }
-        return solution;
+
+        @Override
+        public Solution fromJson(JSONObject jsonObject) {
+            Solution solution = new Solution();
+            solution.id = jsonObject.getInt("id");
+            solution.status = jsonObject.getString("status");
+            try {
+                solution.submittedAt = DATE_FORMAT.parse(jsonObject.getString("submitted_at"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return solution;
+        }
     }
 }
