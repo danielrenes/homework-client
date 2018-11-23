@@ -2,10 +2,8 @@ package client;
 
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -29,8 +27,17 @@ public class Configuration {
     }
 
     private JSONObject load() throws IOException, URISyntaxException, NullPointerException {
-        String content = new String(Files.readAllBytes(
-                Paths.get(getClass().getClassLoader().getResource(CONFIG_FILE_PATH).toURI())));
+        String content;
+
+        try {
+            // try to load from the same directory as the JAR is located
+            content = new String(Files.readAllBytes(Paths.get(CONFIG_FILE_PATH)));
+        } catch (IOException e) {
+            // try to load from resources
+            content = new String(Files.readAllBytes(
+                    Paths.get(getClass().getClassLoader().getResource(CONFIG_FILE_PATH).toURI())));
+        }
+
         return new JSONObject(content);
     }
 
